@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { getServerSession } from "next-auth";
+import AuthProvider from "@/utils/sessionProvider";
+import Navbar from "@/components/navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,9 +18,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = getServerSession();
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className} suppressHydrationWarning={true}>
+        <AuthProvider session={session}>
+          <Navbar />
+          {children}
+          <Toaster />
+        </AuthProvider>
+      </body>
     </html>
   );
 }
