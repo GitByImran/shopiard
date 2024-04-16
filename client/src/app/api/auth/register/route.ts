@@ -11,9 +11,9 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
-      return NextResponse.json(
-        { message: "Email already exists" },
-        { status: 400 }
+      return new NextResponse(
+        JSON.stringify({ message: "Email already exists" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
@@ -27,9 +27,15 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     await newUser.save();
     console.log("user created", newUser);
 
-    return NextResponse.json({ message: "Success" });
+    return new NextResponse(
+      JSON.stringify({ message: "Success" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
     console.log("Error:", error);
-    return NextResponse.error(error);
+    return new NextResponse(
+      JSON.stringify({ message: "Internal server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 };
