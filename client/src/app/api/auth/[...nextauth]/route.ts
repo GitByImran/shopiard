@@ -3,9 +3,8 @@ import { connect } from "@/utils/db";
 import bcrypt from "bcrypt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { NextApiRequest, NextApiResponse } from "next";
 
-const handler: any = NextAuth({
+const authOptions: any = {
   providers: [
     CredentialsProvider({
       credentials: {
@@ -45,29 +44,9 @@ const handler: any = NextAuth({
       return session;
     },
   },
-});
-
-export default handler;
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
 };
 
-export type NextAuthRequest = NextApiRequest & { query: any };
-export type NextAuthResponse = NextApiResponse;
+const handler = NextAuth(authOptions);
 
-export const GET = async (
-  req: NextAuthRequest,
-  res: NextAuthResponse
-): Promise<void> => {
-  await handler(req, res);
-};
+export { handler as get, handler as POST };
 
-export const POST = async (
-  req: NextAuthRequest,
-  res: NextAuthResponse
-): Promise<void> => {
-  await handler(req, res);
-};
