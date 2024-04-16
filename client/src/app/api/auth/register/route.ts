@@ -1,9 +1,9 @@
 import UserModel from "@/models/user";
 import { connect } from "@/utils/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
-const POST = async (request: Request) => {
+export const POST = async (request: NextRequest): Promise<NextResponse> => {
   await connect();
 
   try {
@@ -30,8 +30,6 @@ const POST = async (request: Request) => {
     return NextResponse.json({ message: "Success" });
   } catch (error) {
     console.log("Error:", error);
-    return error;
+    return NextResponse.error(error);
   }
 };
-
-export default POST;
