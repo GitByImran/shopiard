@@ -128,7 +128,7 @@ const SignUpForm = () => {
                 className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-slate-600"
                 onClick={togglePasswordVisibility}
               >
-                {isPasswordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
+                {isPasswordVisible ? <Eye size={20} /> : <EyeOff size={20} />}
               </div>
             </div>
             <div className="text-sm flex flex-col">
