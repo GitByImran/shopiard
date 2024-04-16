@@ -3,6 +3,7 @@ import { connect } from "@/utils/db";
 import bcrypt from "bcrypt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const handler: any = NextAuth({
   providers: [
@@ -46,4 +47,27 @@ const handler: any = NextAuth({
   },
 });
 
-export { handler as GET, handler as POST };
+export default handler;
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export type NextAuthRequest = NextApiRequest & { query: any };
+export type NextAuthResponse = NextApiResponse;
+
+export const GET = async (
+  req: NextAuthRequest,
+  res: NextAuthResponse
+): Promise<void> => {
+  await handler(req, res);
+};
+
+export const POST = async (
+  req: NextAuthRequest,
+  res: NextAuthResponse
+): Promise<void> => {
+  await handler(req, res);
+};
