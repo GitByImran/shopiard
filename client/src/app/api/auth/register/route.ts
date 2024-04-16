@@ -3,7 +3,7 @@ import { connect } from "@/utils/db";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
-export const POST = async (request: Request) => {
+const POST = async (request: Request) => {
   await connect();
 
   try {
@@ -33,3 +33,5 @@ export const POST = async (request: Request) => {
     return error;
   }
 };
+
+export default POST;
