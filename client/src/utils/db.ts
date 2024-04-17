@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const connect = async () => {
-  if (mongoose.connections[0].readyState) return;
+  // if (mongoose.connections[0].readyState) return;
 
   try {
     await mongoose
@@ -9,6 +9,6 @@ export const connect = async () => {
       .then((response) => console.log(response))
       .then(() => console.log("connected"));
   } catch (error) {
-    console.log("error to connect");
+    console.log("unable to connect database");
   }
 };

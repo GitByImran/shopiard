@@ -1,9 +1,9 @@
-import Navbar from "@/components/navbar";
+import ProductSection from "@/components/sections/productSection";
 
 export default function Home() {
   return (
     <main className="container">
-      <h2>home page</h2>
+      <ProductSection />
     </main>
   );
 }
