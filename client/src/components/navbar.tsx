@@ -60,7 +60,7 @@ const Navbar = () => {
 
   return (
     <div className="border-b">
-      <div className="container py-2 flex justify-between items-center gap-5">
+      <div className="container py-4 flex justify-between items-center gap-5">
         <div className="logo">
           <Link href={"/"}>
             {" "}
