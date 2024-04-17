@@ -21,7 +21,7 @@ export default function RootLayout({
   const session = getServerSession();
   return (
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning={true}>
+      <body className={`${inter.className}`} suppressHydrationWarning={true}>
         <AuthProvider session={session}>
           <Navbar />
           {children}

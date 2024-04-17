@@ -1,6 +1,13 @@
 "use client";
 
-import { LogOut, ShoppingCart, UserCog, UserRound } from "lucide-react";
+import SignOutPage from "@/app/(client)/signout/page";
+import {
+  LayoutDashboard,
+  LogOut,
+  ShoppingCart,
+  UserCog,
+  UserRound,
+} from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,9 +15,14 @@ import React, { useEffect, useRef, useState } from "react";
 
 const Auth_Menus = [
   {
+    label: "dashboard",
+    icon: <LayoutDashboard size={18} />,
+    goto: "/dashboard",
+  },
+  {
     label: "profile",
     icon: <UserRound size={18} />,
-    goto: "/signin",
+    goto: "",
   },
   {
     label: "carts",
@@ -47,10 +59,13 @@ const Navbar = () => {
   }, [authMenuRef]);
 
   return (
-    <div>
-      <div className="container flex justify-between items-center gap-5 p-4 border-b">
+    <div className="border-b">
+      <div className="container py-2 flex justify-between items-center gap-5">
         <div className="logo">
-          <h2 className="text-3xl font-extrabold">Shopiard</h2>
+          <Link href={"/"}>
+            {" "}
+            <h2 className="text-3xl font-extrabold">Shopiard</h2>
+          </Link>
         </div>
         <div className="flex items-center gap-5">
           {session ? (
@@ -80,20 +95,15 @@ const Navbar = () => {
                     >
                       <Link
                         href={menu.goto}
-                        className="px-2 py-1 rounded text-md font-medium capitalize hover:bg-cyan-600 hover:text-white w-full flex justify-between items-center"
+                        className="px-2 py-1 rounded text-md font-medium capitalize cursor-pointer hover:bg-cyan-600 hover:text-white w-full flex justify-between items-center"
                       >
                         {menu.label} {menu.icon}
                       </Link>
                     </li>
                   ))}
-                  <button
-                    className="mt-2 px-2 py-1 rounded border hover:border-cyan-600 hover:bg-cyan-600 hover:!text-white w-full text-md font-medium capitalize"
-                    onClick={() => {
-                      signOut();
-                    }}
-                  >
-                    <span className="">Sign out</span>
-                  </button>
+                  <li>
+                    <SignOutPage />
+                  </li>
                 </ul>
               )}
             </div>
