@@ -1,6 +1,7 @@
 "use client";
 
 import { CircleCheck, CirclePlus, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 const ProductCard = ({ product }: any) => {
@@ -11,11 +12,13 @@ const ProductCard = ({ product }: any) => {
   return (
     <div className="border rounded-lg overflow-hidden">
       <div className="h-52 w-full">
-        <img
-          src={product.thumbnail}
-          alt={product.title}
-          className="h-full w-full object-cover select-none"
-        />
+        <Link href={`/product/${product?.id}`}>
+          <img
+            src={product.thumbnail}
+            alt={product.title}
+            className="h-full w-full object-cover select-none"
+          />
+        </Link>
       </div>
       <div className="p-4 space-y-4">
         <h3 className="truncate select-none">{product.title}</h3>

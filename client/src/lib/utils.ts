@@ -9,3 +9,6 @@ export const truncateTitle = (title: string, maxLength: number) => {
   if (title.length <= maxLength) return title;
   return title.slice(0, maxLength) + "...";
 };
+
+export const discountedPrice = (price: number, discountPercentage: number) =>
+  Math.round(price * (1 - discountPercentage / 100));

@@ -7,9 +7,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Autoplay, Pagination } from "swiper/modules";
 import Link from "next/link";
-import { truncateTitle } from "@/lib/utils";
 
-const getProducts = async () => {
+export const getProducts = async () => {
   const response = await fetch("https://dummyjson.com/products");
   const data = await response.json();
   return data;
@@ -27,8 +26,12 @@ const generateSwiperComponent = (items: string[], autoplayDelay: number) => (
       clickable: true,
     }}
     breakpoints={{
-      640: {
+      0: {
         slidesPerView: 2,
+        spaceBetween: 20,
+      },
+      640: {
+        slidesPerView: 3,
         spaceBetween: 20,
       },
       768: {
@@ -36,7 +39,7 @@ const generateSwiperComponent = (items: string[], autoplayDelay: number) => (
         spaceBetween: 40,
       },
       1024: {
-        slidesPerView: 5,
+        slidesPerView: 6,
         spaceBetween: 50,
       },
     }}
@@ -47,8 +50,8 @@ const generateSwiperComponent = (items: string[], autoplayDelay: number) => (
       {items.map((item: string, index: number) => (
         <SwiperSlide key={index}>
           <Link href={""}>
-            <p className="p-4 bg-slate-50 text-slate-600 font-bold capitalize border rounded-lg">
-              {truncateTitle(item, 20)}
+            <p className="p-4 bg-slate-50 text-slate-600 font-bold capitalize border rounded-lg break-words">
+              {item}
             </p>
           </Link>
         </SwiperSlide>
@@ -56,7 +59,7 @@ const generateSwiperComponent = (items: string[], autoplayDelay: number) => (
     </div>
   </Swiper>
 );
-
+  
 const ProductSection = () => {
   const [products, setProducts] = useState<any>([]);
   const [categories, setCategories] = useState<any[]>([]);

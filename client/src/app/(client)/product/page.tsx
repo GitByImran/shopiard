@@ -3,7 +3,7 @@ import React from "react";
 
 const Product = () => {
   return (
-    <div>
+    <div className="container">
       products <Link href={"/product/1"}>1</Link>
     </div>
   );

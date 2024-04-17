@@ -2,6 +2,8 @@
 
 import SignOutPage from "@/app/(client)/signout/page";
 import {
+  CirclePlus,
+  CircleCheck,
   LayoutDashboard,
   LogOut,
   ShoppingCart,
@@ -74,11 +76,10 @@ const Navbar = () => {
                 onClick={handleShowAuthMenu}
                 className="outline-none rounded-full"
               >
-                <Image
-                  src={"/dummy-avatar.png"}
-                  alt=""
-                  height={30}
-                  width={30}
+                <img
+                  src="/dummy-avatar.png"
+                  alt="dummy-avatar.png"
+                  className="h-9 w-9 mt-1"
                 />
               </button>
               {showAuthMenu && (
@@ -112,6 +113,10 @@ const Navbar = () => {
               Sign in
             </Link>
           )}
+          <button className="flex justify-between items-center gap-2 border h-9 w-16 px-2 rounded">
+            <ShoppingCart className="hover:text-cyan-600" />
+            <span className="text-lg font-bold">0</span>
+          </button>
         </div>
       </div>
     </div>
