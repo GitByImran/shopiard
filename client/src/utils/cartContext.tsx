@@ -33,14 +33,13 @@ const CartContext = createContext<CartContextType>({
 
 export const CartProvider = ({ children }: any) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
-    
-    if (localStorage) {
-      const storedCart = localStorage.getItem("cart");
-      return storedCart ? JSON.parse(storedCart) : [];
-    } else {
-      return;
-    }
+    const storedCart = localStorage.getItem("cart");
+    return storedCart ? JSON.parse(storedCart) : [];
   });
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   const addToCart = (item: CartItem) => {
     setCart((prevCart) => {
@@ -58,10 +57,7 @@ export const CartProvider = ({ children }: any) => {
       }
     });
   };
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+  
 
   return (
     <CartContext.Provider value={{ cart, addToCart }}>
@@ -71,4 +67,3 @@ export const CartProvider = ({ children }: any) => {
 };
 
 export const useCart = () => useContext(CartContext);
-
