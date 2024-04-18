@@ -13,9 +13,21 @@ import {
 } from "lucide-react";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
+import ImageGallery from "@/components/imageGallery";
+import { useCart } from "@/utils/cartContext";
 
 const ProductDetails = ({ params }: any) => {
   const [product, setProduct] = useState<any>(null);
+
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    const newItem = {
+      product: product,
+      quantity: 1,
+    };
+    addToCart(newItem);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -33,27 +45,34 @@ const ProductDetails = ({ params }: any) => {
   }
 
   return (
-    <div className="my-10">
-      <div className="container">
+    <div className="">
+      <div className="container select-none">
+        <div>
+          <p className="flex items-center flex-wrap gap-2 py-4  text-sm font-semibold capitalize">
+            <span>product</span>
+            {">"}
+            <span>{product.category}</span>
+            {">"}
+            <span>{product.brand}</span>
+            {">"}
+            <span>{product.title}</span>
+          </p>
+        </div>
         <div className="flex md:flex-row flex-col gap-10">
           <div className="flex-1">
-            <img
-              src={product.thumbnail}
-              alt=""
-              className="h-[100%] w-full object-cover"
-            />
+            <ImageGallery images={product.images} />
           </div>
           <div className="flex-1">
             <h2 className="text-2xl font-bold ">{product.title}</h2>
             <hr className="my-4" />
             <div className="space-y-4">
-              <p className="flex gap-2 items-baseline">
+              <p className="flex gap-2 items-center">
                 {product.discountPercentage > 0 && (
-                  <sub className="text-slate-400">
+                  <sub className="text-slate-400 text-lg">
                     <del>${product.price}</del>
                   </sub>
                 )}
-                <span className="text-xl font-bold">
+                <span className="text-2xl font-bold text-cyan-600">
                   $
                   {product.discountPercentage > 0
                     ? discountedPrice(product.price, product.discountPercentage)
@@ -82,9 +101,9 @@ const ProductDetails = ({ params }: any) => {
                 )}
               </p>
               <div className="flex flex-wrap items-center gap-2">
-                <p className="max-w-[180px]">
+                <div className="max-w-[180px]">
                   <Rating readOnly value={product.rating} />
-                </p>
+                </div>
                 <p className="font-bold">{product.rating} Ratings</p>
               </div>
               <div className="py-4 flex items-center gap-5">
@@ -100,7 +119,10 @@ const ProductDetails = ({ params }: any) => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="w-full border p-2 border-none outline-none select-none font-bold bg-cyan-600 text-white hover:bg-cyan-800">
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full border p-2 border-none outline-none select-none font-bold bg-cyan-600 text-white hover:bg-cyan-800"
+                >
                   Add To Cart
                 </button>
                 <button className="w-full border p-2 border-none outline-none select-none font-bold bg-amber-600 text-white hover:bg-amber-800">
@@ -108,6 +130,44 @@ const ProductDetails = ({ params }: any) => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/*  */}
+        <div>
+          <div className="mt-10 space-y-4">
+            <div className="">
+              <h2 className="w-fit py-1 border-b-4 border-cyan-600 text-2xl font-bold">
+                Description
+              </h2>
+              <hr className="border-cyan-600" />
+            </div>
+            {/* <p>{product.description}</p> */}
+            <p className="text-slate-600">
+              The iPhone X, a flagship device from Apple Inc., represents a
+              pinnacle of innovation and technology in the realm of smartphones.
+              Renowned for its sleek design, cutting-edge features, and powerful
+              performance, Featuring a glass front and back, stainless steel
+              frame, and edge-to-edge display, the iPhone X exudes premium
+              craftsmanship and attention to detail. Its slim profile and
+              seamless construction make it a pleasure to hold and use, while
+              its durable materials ensure longevity and durability. One of the
+              standout features of the iPhone X is its advanced Face ID
+              technology, which revolutionizes the way users unlock their
+              devices and authenticate securely. With Face ID, users can
+              effortlessly unlock their iPhone X with just a glance, eliminating
+              the need for traditional passwords or fingerprint sensors. Powered
+              by a sophisticated TrueDepth camera system, Face ID accurately
+              maps the user's face in three dimensions, providing unparalleled
+              security and convenience. In addition to Face ID, the iPhone X
+              boasts an impressive array of camera capabilities that empower
+              users to capture stunning photos and videos with ease. Equipped
+              with a dual-camera system, featuring wide and telephoto lenses,
+              the iPhone X delivers breathtaking photography in any lighting
+              condition. From vibrant landscapes to detailed portraits, the
+              iPhone X's camera system excels in capturing the beauty of the
+              world around us.
+            </p>
           </div>
         </div>
       </div>

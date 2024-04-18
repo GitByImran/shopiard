@@ -1,10 +1,21 @@
 "use client";
 
+import { useCart } from "@/utils/cartContext";
 import { CircleCheck, CirclePlus, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
 const ProductCard = ({ product }: any) => {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    const newItem = {
+      product: product,
+      quantity: 1,
+    };
+    addToCart(newItem);
+  };
+
   const discountedPrice = Math.round(
     product.price * (1 - product.discountPercentage / 100)
   );
@@ -26,7 +37,7 @@ const ProductCard = ({ product }: any) => {
           <p className="font-bold select-none">
             ${product.discountPercentage > 0 ? discountedPrice : product.price}
           </p>
-          <button className="relative">
+          <button className="relative" onClick={handleAddToCart}>
             <ShoppingCart size={20} className="hover:text-cyan-600" />
             <span className="absolute -top-3 -right-2">
               <CirclePlus size={16} />

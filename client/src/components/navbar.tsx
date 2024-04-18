@@ -1,6 +1,7 @@
 "use client";
 
 import SignOutPage from "@/app/(client)/signout/page";
+import { useCart } from "@/utils/cartContext";
 import {
   CirclePlus,
   CircleCheck,
@@ -35,7 +36,9 @@ const Auth_Menus = [
 
 const Navbar = () => {
   const { data: session } = useSession();
-  console.log(session);
+
+  const { cart } = useCart();
+  console.log(cart);
 
   const [showAuthMenu, setShowAuthMenu] = useState<boolean>(false);
   const authMenuRef = useRef<HTMLDivElement>(null);
@@ -62,7 +65,7 @@ const Navbar = () => {
 
   return (
     <div className="border-b">
-      <div className="container py-4 flex justify-between items-center gap-5">
+      <div className="container select-none py-4 flex justify-between items-center gap-5">
         <div className="logo">
           <Link href={"/"}>
             {" "}
@@ -115,7 +118,7 @@ const Navbar = () => {
           )}
           <button className="flex justify-between items-center gap-2 border h-9 w-16 px-2 rounded">
             <ShoppingCart className="hover:text-cyan-600" />
-            <span className="text-lg font-bold">0</span>
+            <span className="text-lg font-bold">{cart.length}</span>
           </button>
         </div>
       </div>
