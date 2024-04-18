@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface Product {
   id: number;
@@ -32,31 +32,35 @@ const CartContext = createContext<CartContextType>({
 });
 
 export const CartProvider = ({ children }: any) => {
-  const [cart, setCart] = useState<CartItem[]>(() => {
+  const [cart, setCart] = useState<CartItem[]>([]);
+
+  useEffect(() => {
     const storedCart = localStorage.getItem("cart");
-    return storedCart ? JSON.parse(storedCart) : [];
-  });
+    if (storedCart) {
+      setCart(JSON.parse(storedCart));
+    }
+  }, []);
 
   const addToCart = (item: CartItem) => {
-    const existingItemIndex = cart.findIndex(
-      (cartItem) => cartItem.product.id === item.product.id
-    );
+    setCart((prevCart) => {
+      const existingItemIndex = prevCart.findIndex(
+        (cartItem) => cartItem.product.id === item.product.id
+      );
 
-    if (existingItemIndex !== -1) {
-      setCart((prevCart) => {
+      if (existingItemIndex !== -1) {
         const updatedCart = [...prevCart];
         updatedCart[existingItemIndex].quantity += item.quantity;
-        localStorage.setItem("cart", JSON.stringify(updatedCart));
         return updatedCart;
-      });
-    } else {
-      setCart((prevCart) => {
+      } else {
         const newCart = [...prevCart, item];
-        localStorage.setItem("cart", JSON.stringify(newCart));
         return newCart;
-      });
-    }
+      }
+    });
   };
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   return (
     <CartContext.Provider value={{ cart, addToCart }}>
