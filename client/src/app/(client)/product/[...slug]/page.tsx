@@ -6,7 +6,7 @@ import { discountedPrice } from "@/lib/utils";
 import {
   CircleCheck,
   CircleX,
-  LayoutGrid,
+  LayoutPanelTop,
   Minus,
   Plus,
   Tag,
@@ -66,7 +66,7 @@ const ProductDetails = ({ params }: any) => {
               </p>
               <p className="flex items-center gap-2">
                 <span className="font-bold">
-                  <LayoutGrid size={20} />
+                  <LayoutPanelTop size={20} />
                 </span>
                 <span className="capitalize font-bold">{product.category}</span>
               </p>
@@ -103,7 +103,7 @@ const ProductDetails = ({ params }: any) => {
                 <button className="w-full border p-2 border-none outline-none select-none font-bold bg-cyan-600 text-white hover:bg-cyan-800">
                   Add To Cart
                 </button>
-                <button className="w-full border p-2 border-none outline-none select-none font-bold bg-amber-600 text-white hover:bg-cyan-800">
+                <button className="w-full border p-2 border-none outline-none select-none font-bold bg-amber-600 text-white hover:bg-amber-800">
                   Buy Now
                 </button>
               </div>
