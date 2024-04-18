@@ -33,8 +33,13 @@ const CartContext = createContext<CartContextType>({
 
 export const CartProvider = ({ children }: any) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
-    const storedCart = localStorage.getItem("cart");
-    return storedCart ? JSON.parse(storedCart) : [];
+    
+    if (localStorage) {
+      const storedCart = localStorage.getItem("cart");
+      return storedCart ? JSON.parse(storedCart) : [];
+    } else {
+      return;
+    }
   });
 
   const addToCart = (item: CartItem) => {
