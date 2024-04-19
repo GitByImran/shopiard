@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 const Product = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 12;
+  const productsPerPage = 8;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -68,7 +68,7 @@ const Product = () => {
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 1}
-          className={`h-6 w-6 p-1 rounded-full flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
+          className={`h-8 w-8 p-1 rounded flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
             currentPage === 1 ? "bg-gray-300 cursor-default" : ""
           }`}
         >
@@ -78,7 +78,7 @@ const Product = () => {
           <button
             key={page}
             onClick={() => handlePageClick(page)}
-            className={`h-6 w-6 rounded-full flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
+            className={`h-6 w-6 p-1 rounded-full flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
               currentPage === page ? "bg-cyan-700 !h-8 !w-8" : ""
             }`}
           >
@@ -88,7 +88,7 @@ const Product = () => {
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className={`h-6 w-6 p-1 rounded-full flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
+          className={`h-8 w-8 p-1 rounded flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
             currentPage === totalPages ? "bg-gray-300 cursor-default" : ""
           }`}
         >
