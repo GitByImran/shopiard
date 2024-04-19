@@ -3,13 +3,12 @@
 import ProductCard from "@/components/productCard";
 import { getProducts } from "@/lib/product";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const Product = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 10;
+  const productsPerPage = 12;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -24,17 +23,32 @@ const Product = () => {
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const getPageNumbers = () => {
+    if (totalPages <= 3) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    } else if (currentPage <= 2) {
+      return [1, 2, 3];
+    } else if (currentPage >= totalPages - 1) {
+      return [totalPages - 2, totalPages - 1, totalPages];
+    } else {
+      return [currentPage - 1, currentPage, currentPage + 1];
+    }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -54,27 +68,29 @@ const Product = () => {
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 1}
-          className="p-1 bg-cyan-600 text-white rounded hover:bg-cyan-800 disabled:bg-gray-300"
+          className={`h-6 w-6 p-1 rounded-full flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
+            currentPage === 1 ? "bg-gray-300 cursor-default" : ""
+          }`}
         >
           <ChevronLeft />
         </button>
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-          (page) => (
-            <button
-              key={page}
-              onClick={() => handlePageClick(page)}
-              className={`h-6 w-6 rounded-full flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
-                currentPage === page ? "bg-cyan-700 !h-8 !w-8" : ""
-              }`}
-            >
-              {page}
-            </button>
-          )
-        )}
+        {getPageNumbers().map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageClick(page)}
+            className={`h-6 w-6 rounded-full flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
+              currentPage === page ? "bg-cyan-700 !h-8 !w-8" : ""
+            }`}
+          >
+            {page}
+          </button>
+        ))}
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className="p-1 bg-cyan-600 text-white rounded hover:bg-cyan-800 disabled:bg-gray-300"
+          className={`h-6 w-6 p-1 rounded-full flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
+            currentPage === totalPages ? "bg-gray-300 cursor-default" : ""
+          }`}
         >
           <ChevronRight />
         </button>
