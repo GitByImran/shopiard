@@ -37,11 +37,12 @@ export const CartProvider = ({ children }: any) => {
       const storedCart = localStorage.getItem("cart");
       return storedCart ? JSON.parse(storedCart) : [];
     } else {
-      return localStorage.getItem("cart");
+      return [];
     }
   });
 
   useEffect(() => {
+    // Save cart to local storage whenever it changes
     if (typeof window !== "undefined") {
       localStorage.setItem("cart", JSON.stringify(cart));
     }
@@ -63,7 +64,6 @@ export const CartProvider = ({ children }: any) => {
       }
     });
   };
-  
 
   return (
     <CartContext.Provider value={{ cart, addToCart }}>

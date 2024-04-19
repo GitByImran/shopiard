@@ -36,9 +36,14 @@ const Auth_Menus = [
 
 const Navbar = () => {
   const { data: session } = useSession();
-
   const { cart } = useCart();
   console.log(cart);
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const [showAuthMenu, setShowAuthMenu] = useState<boolean>(false);
   const authMenuRef = useRef<HTMLDivElement>(null);
@@ -118,7 +123,9 @@ const Navbar = () => {
           )}
           <button className="flex justify-between items-center gap-2 border h-9 w-16 px-2 rounded">
             <ShoppingCart className="hover:text-cyan-600" />
-            <span className="text-lg font-bold">{cart.length}</span>
+            <span className="text-lg font-bold">
+              {isClient ? cart.length : 0}
+            </span>
           </button>
         </div>
       </div>
