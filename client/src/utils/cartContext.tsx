@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-interface Product {
+export interface Product {
   id: number;
   title: string;
   description: string;
@@ -16,7 +16,7 @@ interface Product {
   images: string[];
 }
 
-interface CartItem {
+export interface CartItem {
   product: Product;
   quantity: number;
 }
@@ -24,11 +24,13 @@ interface CartItem {
 interface CartContextType {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
+  removeFromCart: (productId: number) => void;
 }
 
 const CartContext = createContext<CartContextType>({
   cart: [],
   addToCart: () => {},
+  removeFromCart: () => {},
 });
 
 export const CartProvider = ({ children }: any) => {
@@ -42,7 +44,6 @@ export const CartProvider = ({ children }: any) => {
   });
 
   useEffect(() => {
-    // Save cart to local storage whenever it changes
     if (typeof window !== "undefined") {
       localStorage.setItem("cart", JSON.stringify(cart));
     }
@@ -65,8 +66,14 @@ export const CartProvider = ({ children }: any) => {
     });
   };
 
+  const removeFromCart = (productId: number) => {
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.product.id !== productId)
+    );
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
       {children}
     </CartContext.Provider>
   );

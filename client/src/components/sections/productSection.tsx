@@ -7,12 +7,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Autoplay, Pagination } from "swiper/modules";
 import Link from "next/link";
-
-export const getProducts = async () => {
-  const response = await fetch("https://dummyjson.com/products");
-  const data = await response.json();
-  return data;
-};
+import { getProducts } from "@/lib/product";
 
 const generateSwiperComponent = (items: string[], autoplayDelay: number) => (
   <Swiper

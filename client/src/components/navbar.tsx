@@ -14,6 +14,7 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
 const Auth_Menus = [
@@ -35,9 +36,9 @@ const Auth_Menus = [
 ];
 
 const Navbar = () => {
+  const router = useRouter();
   const { data: session } = useSession();
   const { cart } = useCart();
-  console.log(cart);
 
   const [isClient, setIsClient] = useState(false);
 
@@ -54,6 +55,10 @@ const Navbar = () => {
 
   const handleCloseAuthMenu = () => {
     setShowAuthMenu(false);
+  };
+
+  const handlePushToCart = () => {
+    router.push("/dashboard/user-cart");
   };
 
   useEffect(() => {
@@ -121,7 +126,10 @@ const Navbar = () => {
               Sign in
             </Link>
           )}
-          <button className="flex justify-between items-center gap-2 border h-9 w-16 px-2 rounded">
+          <button
+            className="flex justify-between items-center gap-2 border h-9 w-16 px-2 rounded"
+            onClick={handlePushToCart}
+          >
             <ShoppingCart className="hover:text-cyan-600" />
             <span className="text-lg font-bold">
               {isClient ? cart.length : 0}

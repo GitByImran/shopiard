@@ -47,7 +47,7 @@ const Sidebar = () => {
 
   return (
     <div>
-      <ul className="space-y-1">
+      <ul className="space-y-1 select-none">
         {User_Dash_Menus.map((menu, index) => (
           <li key={index} className="w-full">
             <Link

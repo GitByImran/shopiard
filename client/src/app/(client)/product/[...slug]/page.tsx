@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getProducts } from "@/components/sections/productSection";
 import { discountedPrice } from "@/lib/utils";
 import {
   CircleCheck,
@@ -15,16 +14,18 @@ import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import ImageGallery from "@/components/imageGallery";
 import { useCart } from "@/utils/cartContext";
+import { getProducts } from "@/lib/product";
 
 const ProductDetails = ({ params }: any) => {
   const [product, setProduct] = useState<any>(null);
+  const [quantity, setQuantity] = useState(1);
 
-  const { addToCart } = useCart();
+  const { cart, addToCart } = useCart();
 
   const handleAddToCart = () => {
     const newItem = {
       product: product,
-      quantity: 1,
+      quantity: quantity,
     };
     addToCart(newItem);
   };
@@ -40,8 +41,25 @@ const ProductDetails = ({ params }: any) => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const foundItem = cart.find((item: any) => item.product.id === product?.id);
+    if (foundItem) {
+      setQuantity(foundItem.quantity);
+    }
+  }, [cart, product]);
+
+  const handleIncrement = () => {
+    setQuantity(quantity + 1);
+  };
+
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
   if (!product) {
-    return <div>Loading Product...</div>;
+    return <div className="container">Loading Product...</div>;
   }
 
   return (
@@ -109,21 +127,31 @@ const ProductDetails = ({ params }: any) => {
               <div className="py-4 flex items-center gap-5">
                 <p className="font-bold">Quantity</p>
                 <div className="flex items-center gap-5 border">
-                  <button className="border-r p-1">
-                    <Plus />
-                  </button>
-                  <span className="font-bold text-lg">0</span>
-                  <button className="border-l p-1">
+                  <button onClick={handleDecrement} className="border-r p-1">
                     <Minus />
+                  </button>
+                  <span className="font-bold text-lg">{quantity}</span>
+
+                  <button onClick={handleIncrement} className="border-l p-1">
+                    <Plus />
                   </button>
                 </div>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={handleAddToCart}
-                  className="w-full border p-2 border-none outline-none select-none font-bold bg-cyan-600 text-white hover:bg-cyan-800"
+                  disabled={cart.some(
+                    (item: any) => item.product.id === product.id
+                  )}
+                  className={`w-full border p-2 border-none outline-none select-none font-bold ${
+                    cart.some((item: any) => item.product.id === product.id)
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-cyan-600 hover:bg-cyan-800"
+                  } text-white`}
                 >
-                  Add To Cart
+                  {cart.some((item: any) => item.product.id === product.id)
+                    ? "Already in Cart"
+                    : "Add To Cart"}
                 </button>
                 <button className="w-full border p-2 border-none outline-none select-none font-bold bg-amber-600 text-white hover:bg-amber-800">
                   Buy Now
@@ -176,3 +204,5 @@ const ProductDetails = ({ params }: any) => {
 };
 
 export default ProductDetails;
+
+

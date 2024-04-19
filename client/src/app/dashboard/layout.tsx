@@ -8,7 +8,7 @@ const DashboardLayout = ({ children }: any) => {
         <div className="border rounded-md p-4">
           <Sidebar />
         </div>
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 select-none">{children}</main>
       </div>
     </div>
   );
