@@ -128,7 +128,7 @@ const Navbar = () => {
           )}
           <button className="relative" onClick={handlePushToCart}>
             <ShoppingCart className="hover:text-cyan-600" />
-            <p className="absolute -top-4 -right-2 h-5 w-5 flex items-center justify-center border rounded-full text-xs bg-cyan-600 text-white">
+            <p className="absolute -top-3 left-3 flex items-center justify-center text-sm font-bold text-cyan-600">
               {isClient ? (cart.length > 9 ? "9+" : cart.length) : 0}
             </p>
           </button>

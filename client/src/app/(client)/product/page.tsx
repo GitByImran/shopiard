@@ -69,7 +69,9 @@ const Product = () => {
           onClick={handlePrevPage}
           disabled={currentPage === 1}
           className={`h-8 w-8 p-1 rounded flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
-            currentPage === 1 ? "bg-gray-300 cursor-default" : ""
+            currentPage === 1
+              ? "bg-gray-300 cursor-default hover:bg-gray-300"
+              : ""
           }`}
         >
           <ChevronLeft />
@@ -89,7 +91,9 @@ const Product = () => {
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
           className={`h-8 w-8 p-1 rounded flex items-center justify-center bg-cyan-600 text-white hover:bg-cyan-800 ${
-            currentPage === totalPages ? "bg-gray-300 cursor-default" : ""
+            currentPage === totalPages
+              ? "bg-gray-300 cursor-default hover:bg-gray-300"
+              : ""
           }`}
         >
           <ChevronRight />
