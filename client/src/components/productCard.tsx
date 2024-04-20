@@ -3,10 +3,12 @@
 import { useCart } from "@/utils/cartContext";
 import { CircleCheck, CirclePlus, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import BuyNowPopup from "./buyNowPopup";
 
 const ProductCard = ({ product }: any) => {
-  const { addToCart } = useCart();
+  const { cart, addToCart } = useCart();
+  const [showModal, setShowModal] = useState(false);
 
   const handleAddToCart = () => {
     const newItem = {
@@ -20,6 +22,9 @@ const ProductCard = ({ product }: any) => {
     product.price * (1 - product.discountPercentage / 100)
   );
 
+  const handleShowBuyNowPOpup = () => {
+    setShowModal(!showModal);
+  };
   return (
     <div className="border rounded-lg overflow-hidden">
       <div className="h-52 w-full">
@@ -37,19 +42,38 @@ const ProductCard = ({ product }: any) => {
           <p className="font-bold select-none">
             ${product.discountPercentage > 0 ? discountedPrice : product.price}
           </p>
-          <button className="relative" onClick={handleAddToCart}>
-            <ShoppingCart size={20} className="hover:text-cyan-600" />
-            <span className="absolute -top-3 -right-2">
-              <CirclePlus size={16} />
-              {/* <CircleCheck size={16} /> */}
+          <button className="" onClick={handleAddToCart}>
+            <span
+              className={`${
+                cart && cart.some((item: any) => item.product.id === product.id)
+                  ? "text-emerald-600"
+                  : "text-cyan-600"
+              }`}
+            >
+              {cart &&
+              cart.some((item: any) => item.product.id === product.id) ? (
+                <CircleCheck size={20} />
+              ) : (
+                <CirclePlus size={20} />
+              )}
             </span>
           </button>
         </div>
       </div>
 
-      <button className="w-full border py-1 border-none outline-none select-none bg-cyan-600 text-white hover:bg-cyan-800">
+      <button
+        onClick={handleShowBuyNowPOpup}
+        className="w-full border py-1 border-none outline-none select-none bg-cyan-600 text-white hover:bg-cyan-800"
+      >
         Buy Now
       </button>
+      {showModal && (
+        <BuyNowPopup
+          showModal={showModal}
+          setShowModal={setShowModal}
+          product={product}
+        />
+      )}
     </div>
   );
 };

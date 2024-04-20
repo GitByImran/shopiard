@@ -5,10 +5,10 @@ const DashboardLayout = ({ children }: any) => {
   return (
     <div>
       <div className="container flex gap-10 my-10">
-        <div className="border rounded-md p-4">
+        <div className="border rounded-md p-4 hidden md:block">
           <Sidebar />
         </div>
-        <main className="flex-1 select-none">{children}</main>
+        <main className="flex-1 select-none overflow-auto">{children}</main>
       </div>
     </div>
   );

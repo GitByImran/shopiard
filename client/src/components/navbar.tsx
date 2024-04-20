@@ -74,7 +74,7 @@ const Navbar = () => {
   }, [authMenuRef]);
 
   return (
-    <div className="border-b">
+    <div className="border-b w-full">
       <div className="container select-none py-4 flex justify-between items-center gap-5">
         <div className="logo">
           <Link href={"/"}>
@@ -126,14 +126,11 @@ const Navbar = () => {
               Sign in
             </Link>
           )}
-          <button
-            className="flex justify-between items-center gap-2 border h-9 w-16 px-2 rounded"
-            onClick={handlePushToCart}
-          >
+          <button className="relative" onClick={handlePushToCart}>
             <ShoppingCart className="hover:text-cyan-600" />
-            <span className="text-lg font-bold">
-              {isClient ? cart.length : 0}
-            </span>
+            <p className="absolute -top-4 -right-2 h-5 w-5 flex items-center justify-center border rounded-full text-xs bg-cyan-600 text-white">
+              {isClient ? (cart.length > 9 ? "9+" : cart.length) : 0}
+            </p>
           </button>
         </div>
       </div>

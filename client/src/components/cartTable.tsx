@@ -53,7 +53,7 @@ const CartTable = ({ cart }: { cart: CartItem[] }) => {
   }
 
   return (
-    <div>
+    <div className="">
       <Table>
         <TableHeader>
           <TableRow>
@@ -121,7 +121,6 @@ const CartTable = ({ cart }: { cart: CartItem[] }) => {
           </TableRow>
         </TableFooter>
       </Table>
-
       <div className="my-10 flex flex-wrap items-center gap-2">
         <h2 className="">
           {">>"} You have selected total {cart.length} items and you have to pay
