@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -11,16 +11,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CartItem, useCart } from "@/utils/cartContext";
-import { Minus, Plus, SquarePen, Trash } from "lucide-react";
-import Link from "next/link";
+import { Minus, Plus, Trash } from "lucide-react";
 
-const CartTable = ({ cart }: { cart: CartItem[] }) => {
+interface Props {
+  cart: CartItem[];
+  onProceedToCheckout: () => void;
+}
+
+const CartTable: React.FC<Props> = ({ cart, onProceedToCheckout }) => {
   const { removeFromCart } = useCart();
   const [cartItems, setCartItems] = useState<CartItem[]>(cart);
 
-  const totalPrice = cartItems.reduce((total: number, item: CartItem) => {
-    return total + item.product.price * item.quantity;
-  }, 0);
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cart");
+    if (storedCart) {
+      setCartItems(JSON.parse(storedCart));
+    }
+  }, []);
+
+  const totalPrice = cartItems.reduce(
+    (total, item) => total + item.product.price * item.quantity,
+    0
+  );
 
   const handleRemoveFromCart = (productId: number) => {
     const updatedCart = cartItems.filter(
@@ -28,6 +40,8 @@ const CartTable = ({ cart }: { cart: CartItem[] }) => {
     );
     setCartItems(updatedCart);
     removeFromCart(productId);
+    const updatedCartJSON = JSON.stringify(updatedCart);
+    localStorage.setItem("cart", updatedCartJSON);
   };
 
   const handleQuantityChange = (index: number, quantity: number) => {
@@ -35,25 +49,12 @@ const CartTable = ({ cart }: { cart: CartItem[] }) => {
     const updatedCartCopy = [...cartItems];
     updatedCartCopy[index] = updatedItem;
     setCartItems(updatedCartCopy);
+    const updatedCartJSON = JSON.stringify(updatedCartCopy);
+    localStorage.setItem("cart", updatedCartJSON);
   };
 
-  if (cart.length <= 0) {
-    return (
-      <div>
-        No product in cart.{" "}
-        <Link href={"/product"} className="underline text-cyan-600">
-          Select product from here
-        </Link>{" "}
-        or{" "}
-        <Link href={"/"} className="underline text-cyan-600">
-          get back to home
-        </Link>
-      </div>
-    );
-  }
-
   return (
-    <div className="">
+    <div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -126,7 +127,10 @@ const CartTable = ({ cart }: { cart: CartItem[] }) => {
           {">>"} You have selected total {cart.length} items and you have to pay
           total ${Math.round(totalPrice)}
         </h2>
-        <button className="px-4 py-1 bg-cyan-600 text-white font-bold rounded capitalize hover:bg-cyan-800">
+        <button
+          className="px-4 py-1 bg-cyan-600 text-white font-bold rounded capitalize hover:bg-cyan-800"
+          onClick={onProceedToCheckout}
+        >
           proceed to checkout !
         </button>
       </div>
