@@ -7,28 +7,14 @@ interface PaymentRequestBody {
 
 export const POST = async (req: Request, res: Response) => {
   try {
-    // const body = await req.json();
-
-    // if (
-    //   !body ||
-    //   typeof body !== "object" ||
-    //   !("totalAmount" in body) ||
-    //   !("cart" in body)
-    // ) {
-    //   throw new Error("Invalid request body");
-    // }
-
-    // const { amount, cart }: PaymentRequestBody = body;
-
-    // console.log(amount, cart);
-
-    const tran_id = Math.floor(100000 + Math.random() * 900000).toString();
+    const body = await req.json();
+    const { tran_id, totalPrice, formData: userData } = body;
     const init_url = "https://sandbox.sslcommerz.com/gwprocess/v4/api.php";
 
     const formData = new FormData();
     formData.append("store_id", "shopi6623a26b9af0a");
     formData.append("store_passwd", "shopi6623a26b9af0a@ssl");
-    formData.append("total_amount", "1111");
+    formData.append("total_amount", totalPrice);
     formData.append("currency", "BDT");
     formData.append("tran_id", tran_id);
     formData.append(
@@ -51,10 +37,10 @@ export const POST = async (req: Request, res: Response) => {
     formData.append("product_name", "Computer.");
     formData.append("product_category", "Electronic");
     formData.append("product_profile", "general");
-    formData.append("cus_name", "imran");
-    formData.append("cus_email", "imran@gmail.com");
+    formData.append("cus_name", userData?.name);
+    formData.append("cus_email", userData?.name);
     formData.append("cus_add1", "Dhaka");
-    formData.append("cus_add2", "Dhaka");
+    formData.append("cus_add2", "");
     formData.append("cus_city", "Dhaka");
     formData.append("cus_state", "Dhaka");
     formData.append("cus_postcode", "1000");

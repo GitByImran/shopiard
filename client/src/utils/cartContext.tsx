@@ -23,14 +23,18 @@ export interface CartItem {
 
 interface CartContextType {
   cart: CartItem[];
+  totalPrice: number;
   addToCart: (item: CartItem) => void;
   removeFromCart: (productId: number) => void;
+  updateQuantity: (productId: number, quantity: number) => void;
 }
 
 const CartContext = createContext<CartContextType>({
   cart: [],
+  totalPrice: 0,
   addToCart: () => {},
   removeFromCart: () => {},
+  updateQuantity: () => {},
 });
 
 export const CartProvider = ({ children }: any) => {
@@ -42,6 +46,21 @@ export const CartProvider = ({ children }: any) => {
       return [];
     }
   });
+
+  const calculateTotalPrice = (cart: CartItem[]) => {
+    return cart.reduce(
+      (total, item) => total + item.product.price * item.quantity,
+      0
+    );
+  };
+
+  const [totalPrice, setTotalPrice] = useState<number>(() =>
+    calculateTotalPrice(cart)
+  );
+
+  useEffect(() => {
+    setTotalPrice(calculateTotalPrice(cart));
+  }, [cart]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -72,10 +91,24 @@ export const CartProvider = ({ children }: any) => {
     );
   };
 
+  const updateQuantity = (productId: number, quantity: number) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.product.id === productId ? { ...item, quantity } : item
+      )
+    );
+  };
+
+  const contextValue: CartContextType = {
+    cart,
+    totalPrice,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
-      {children}
-    </CartContext.Provider>
+    <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>
   );
 };
 

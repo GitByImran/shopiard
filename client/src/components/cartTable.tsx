@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,8 +19,9 @@ interface Props {
 }
 
 const CartTable: React.FC<Props> = ({ cart, onProceedToCheckout }) => {
-  const { removeFromCart } = useCart();
+  const { removeFromCart, updateQuantity } = useCart();
   const [cartItems, setCartItems] = useState<CartItem[]>(cart);
+  const totalPrice = useCart().totalPrice;
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
@@ -28,11 +29,6 @@ const CartTable: React.FC<Props> = ({ cart, onProceedToCheckout }) => {
       setCartItems(JSON.parse(storedCart));
     }
   }, []);
-
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.product.price * item.quantity,
-    0
-  );
 
   const handleRemoveFromCart = (productId: number) => {
     const updatedCart = cartItems.filter(
@@ -45,6 +41,7 @@ const CartTable: React.FC<Props> = ({ cart, onProceedToCheckout }) => {
   };
 
   const handleQuantityChange = (index: number, quantity: number) => {
+    updateQuantity(cartItems[index].product.id, quantity);
     const updatedItem = { ...cartItems[index], quantity };
     const updatedCartCopy = [...cartItems];
     updatedCartCopy[index] = updatedItem;

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import Link from "next/link";
 import LoadingButton from "./loading-button";
+import { useCart } from "@/utils/cartContext";
 
 interface PaymentMethod {
   name: string;
@@ -20,11 +21,14 @@ const CheckOutModal = ({ user, cart, amount, setShowCheckoutModal }: any) => {
     email: user?.email || "",
     address: "",
     contact: "",
-    paymentMethod: "",
   });
+
+  const { totalPrice, removeFromCart } = useCart();
 
   const [methods, setMethods] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -37,8 +41,14 @@ const CheckOutModal = ({ user, cart, amount, setShowCheckoutModal }: any) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
     e.preventDefault();
+    const tran_id = Math.floor(100000 + Math.random() * 900000).toString();
+
     const res = await fetch("/api/gateway/payment", {
       method: "POST",
+      body: JSON.stringify({ tran_id, totalPrice, user, formData }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     const data = await res.json();
     const filteredMethods = data.data.desc.filter(
@@ -48,8 +58,38 @@ const CheckOutModal = ({ user, cart, amount, setShowCheckoutModal }: any) => {
     );
     setMethods(filteredMethods);
     setIsLoading(false);
-    console.log(methods);
+
+    const paymentData = {
+      information: {
+        name: user.name,
+        email: user.email,
+        address: formData.address,
+        contact: formData.contact,
+        cart: cart,
+        totalPrice: totalPrice,
+      },
+      trxId: tran_id,
+      status: false,
+      gw: "",
+    };
+
+    try {
+      const fetchUrl = await fetch("/api/database/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(paymentData),
+      });
+
+      const res = await fetchUrl.json();
+      console.log("Response:", res);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+
+  if (selectedPaymentMethod) {
+    localStorage.setItem("gw", selectedPaymentMethod);
+  }
 
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 h-full w-full flex justify-center items-center bg-black/70">
@@ -91,6 +131,7 @@ const CheckOutModal = ({ user, cart, amount, setShowCheckoutModal }: any) => {
               <div className="flex flex-col gap-2">
                 <label htmlFor="address" className="text-sm font-semibold">
                   Address
+                  <span className="mx-1 text-cyan-800 text-xs">(required)</span>
                 </label>
                 <input
                   id="address"
@@ -100,11 +141,13 @@ const CheckOutModal = ({ user, cart, amount, setShowCheckoutModal }: any) => {
                   value={formData.address}
                   onChange={handleChange}
                   placeholder="Enter your full address"
+                  required={true}
                 />
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor="contact" className="text-sm font-semibold">
-                  Contact
+                  Contact{" "}
+                  <span className="mx-1 text-cyan-800 text-xs">(required)</span>
                 </label>
                 <input
                   id="contact"
@@ -114,6 +157,7 @@ const CheckOutModal = ({ user, cart, amount, setShowCheckoutModal }: any) => {
                   value={formData.contact}
                   onChange={handleChange}
                   placeholder="Enter your contact number"
+                  required={true}
                 />
               </div>
             </div>
@@ -121,22 +165,35 @@ const CheckOutModal = ({ user, cart, amount, setShowCheckoutModal }: any) => {
           <div className="flex flex-wrap items-center gap-5 my-4">
             <button
               type="submit"
-              className="px-4 py-2  bg-cyan-600 text-white hover:bg-cyan-800 rounded-md capitalize"
+              className={`px-4 py-2 text-white bg-cyan-600 hover:bg-cyan-800 rounded-md capitalize ${
+                (!formData.name ||
+                  !formData.email ||
+                  !formData.address ||
+                  !formData.contact ||
+                  isLoading) &&
+                "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
+              }`}
             >
               Choose Payment Method
             </button>
+
             <div className="flex gap-2">
               {isLoading && <LoadingButton />}
               {!isLoading &&
                 methods &&
                 methods.map((method: any, index: number) => (
-                  <Link href={method.redirectGatewayURL || ""} key={index}>
-                    <img
-                      src={method.logo}
-                      alt={method.name}
-                      className="h-12 w-full object-contain border border-gray-300 rounded-md  hover:shadow-lg p-2"
-                    />
-                  </Link>
+                  <div
+                    key={index}
+                    onClick={() => setSelectedPaymentMethod(method.name)}
+                  >
+                    <Link href={method.redirectGatewayURL || ""}>
+                      <img
+                        src={method.logo}
+                        alt={method.name}
+                        className="h-12 w-full object-contain border border-gray-300 rounded-md  hover:shadow-lg p-2"
+                      />
+                    </Link>
+                  </div>
                 ))}
             </div>
           </div>
