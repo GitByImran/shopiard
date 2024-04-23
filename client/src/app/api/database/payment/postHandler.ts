@@ -3,6 +3,10 @@ import { connect } from "@/utils/db";
 import PaymentModel, { IPayment } from "@/models/payment";
 
 export const POST = async (request: NextRequest, response: NextResponse) => {
+  if (request.method !== "POST") {
+    return NextResponse.json({ message: "Method Not Allowed" });
+  }
+
   await connect();
 
   try {

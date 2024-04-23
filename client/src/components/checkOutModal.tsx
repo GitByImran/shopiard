@@ -42,6 +42,7 @@ const CheckOutModal = ({ user, cart, amount, setShowCheckoutModal }: any) => {
     setIsLoading(true);
     e.preventDefault();
     const tran_id = Math.floor(100000 + Math.random() * 900000).toString();
+    // const roundedTotalPrice = Math.round(totalPrice);
 
     const res = await fetch("/api/gateway/payment", {
       method: "POST",
@@ -190,7 +191,7 @@ const CheckOutModal = ({ user, cart, amount, setShowCheckoutModal }: any) => {
                       <img
                         src={method.logo}
                         alt={method.name}
-                        className="h-12 w-full object-contain border border-gray-300 rounded-md  hover:shadow-lg p-2"
+                        className="h-12 min-w-12 w-full object-contain border border-gray-300 rounded-md  hover:shadow-lg p-2"
                       />
                     </Link>
                   </div>

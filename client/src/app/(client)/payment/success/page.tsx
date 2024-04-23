@@ -11,7 +11,7 @@ const PaymentSuccessPage = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const { cart, removeFromCart } = useCart();
-  const [count, setCount] = useState(3);
+  const [count, setCount] = useState(6);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
@@ -37,13 +37,13 @@ const PaymentSuccessPage = () => {
           });
 
           const intervalId = setInterval(() => {
-            setCount((prevCount) => prevCount - 1);
+            setCount((prevCount) => (prevCount > 0 ? prevCount - 1 : 0));
           }, 1000);
 
           setTimeout(() => {
             clearInterval(intervalId);
             router.replace("/dashboard/user-payment");
-          }, 3000);
+          }, 5000);
 
           setTimeout(() => {
             setSuccess(true);
@@ -63,9 +63,9 @@ const PaymentSuccessPage = () => {
   }, []);
 
   return (
-    <div className="container flex justify-center items-center">
-      <div className="flex flex-col justify-center items-center gap-5 my-40">
-        {success && (
+    <div className="container flex justify-center items-center py-40">
+      {success ? (
+        <div className="flex flex-col justify-center items-center gap-5">
           <div className="icon-wrapper">
             <CheckCircle
               stroke="green"
@@ -73,19 +73,19 @@ const PaymentSuccessPage = () => {
               className="check-circle-icon"
             />
           </div>
-        )}
-        <div className="font-bold text-2xl capitalize">
-          {success ? (
-            "Payment successful"
-          ) : (
-            <div className="flex items-center gap-2">
-              checking payment status ... {""}
-              <LoadingButton />
-            </div>
-          )}
+          <div className="flex flex-col justify-center items-center gap-5">
+            <p className="font-bold text-2xl capitalize">Payment successful</p>
+            <p>Redirecting in {count}</p>
+          </div>
         </div>
-        {success && <p>Redirecting in {count}</p>}
-      </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <p className="font-bold text-2xl capitalize">
+            checking payment status ...
+          </p>{" "}
+          <LoadingButton />
+        </div>
+      )}
 
       <style jsx>{`
         .icon-wrapper {

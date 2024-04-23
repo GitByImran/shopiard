@@ -3,6 +3,9 @@ import { connect } from "@/utils/db";
 import PaymentModel, { IPayment } from "@/models/payment";
 
 export const PUT = async (request: NextRequest, response: NextResponse) => {
+  if (request.method !== "PUT") {
+    return NextResponse.json({ message: "Method Not Allowed" });
+  }
   await connect();
 
   try {
