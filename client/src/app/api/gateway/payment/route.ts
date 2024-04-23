@@ -9,6 +9,7 @@ export const POST = async (req: Request, res: Response) => {
   try {
     const body = await req.json();
     const { tran_id, totalPrice, formData: userData } = body;
+    console.log("userData", userData);
     const init_url = "https://sandbox.sslcommerz.com/gwprocess/v4/api.php";
 
     const formData = new FormData();
