@@ -21,7 +21,7 @@ interface Props {
 const CartTable: React.FC<Props> = ({ cart, onProceedToCheckout }) => {
   const { removeFromCart, updateQuantity } = useCart();
   const [cartItems, setCartItems] = useState<CartItem[]>(cart);
-  const totalPrice = useCart().totalPrice;
+  const { totalPrice } = useCart();
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
@@ -29,6 +29,13 @@ const CartTable: React.FC<Props> = ({ cart, onProceedToCheckout }) => {
       setCartItems(JSON.parse(storedCart));
     }
   }, []);
+
+  const calculateDiscountedPrice = (item: CartItem) => {
+    const discountPrice =
+      item.product.price -
+      (item.product.price * item.product.discountPercentage) / 100;
+    return discountPrice * item.quantity;
+  };
 
   const handleRemoveFromCart = (productId: number) => {
     const updatedCart = cartItems.filter(
@@ -105,7 +112,7 @@ const CartTable: React.FC<Props> = ({ cart, onProceedToCheckout }) => {
                 </div>
               </TableCell>
               <TableCell className="text-right">
-                ${(item.product.price * item.quantity).toFixed(2)}
+                ${calculateDiscountedPrice(item).toFixed(2)}
               </TableCell>
             </TableRow>
           ))}

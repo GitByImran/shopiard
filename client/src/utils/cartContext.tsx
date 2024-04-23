@@ -48,10 +48,12 @@ export const CartProvider = ({ children }: any) => {
   });
 
   const calculateTotalPrice = (cart: CartItem[]) => {
-    return cart.reduce(
-      (total, item) => total + item.product.price * item.quantity,
-      0
-    );
+    return cart.reduce((total, item) => {
+      const discountPrice =
+        item.product.price -
+        (item.product.price * item.product.discountPercentage) / 100;
+      return total + discountPrice * item.quantity;
+    }, 0);
   };
 
   const [totalPrice, setTotalPrice] = useState<number>(() =>
@@ -113,3 +115,4 @@ export const CartProvider = ({ children }: any) => {
 };
 
 export const useCart = () => useContext(CartContext);
+

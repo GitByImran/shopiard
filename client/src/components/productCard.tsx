@@ -27,7 +27,7 @@ const ProductCard = ({ product }: any) => {
   };
   return (
     <div className="border rounded-lg overflow-hidden">
-      <div className="h-52 w-full">
+      <div className="h-28 sm:h-52 w-full">
         <Link href={`/product/${product?.id}`}>
           <img
             src={product.thumbnail}

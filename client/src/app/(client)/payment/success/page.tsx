@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useCart } from "@/utils/cartContext";
+import { useRouter } from "next/navigation";
+import { CheckCircle } from "lucide-react";
+import LoadingButton from "@/components/loading-button";
 
 const PaymentSuccessPage = () => {
+  const router = useRouter();
   const { data: session } = useSession();
   const { cart, removeFromCart } = useCart();
+  const [count, setCount] = useState(3);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     const fetchPaymentData = async () => {
@@ -29,9 +35,19 @@ const PaymentSuccessPage = () => {
           cart.forEach((item) => {
             removeFromCart(item.product.id);
           });
+
+          const intervalId = setInterval(() => {
+            setCount((prevCount) => prevCount - 1);
+          }, 1000);
+
           setTimeout(() => {
-            window.location.href = "/dashboard/user-payment";
+            clearInterval(intervalId);
+            router.replace("/dashboard/user-payment");
           }, 3000);
+
+          setTimeout(() => {
+            setSuccess(true);
+          }, 500);
         } else {
           console.error("Failed to update payment status");
         }
@@ -47,8 +63,48 @@ const PaymentSuccessPage = () => {
   }, []);
 
   return (
-    <div className="container">
-      <p>Payment success</p>
+    <div className="container flex justify-center items-center">
+      <div className="flex flex-col justify-center items-center gap-5 my-40">
+        {success && (
+          <div className="icon-wrapper">
+            <CheckCircle
+              stroke="green"
+              size={50}
+              className="check-circle-icon"
+            />
+          </div>
+        )}
+        <div className="font-bold text-2xl capitalize">
+          {success ? (
+            "Payment successful"
+          ) : (
+            <div className="flex items-center gap-2">
+              checking payment status ... {""}
+              <LoadingButton />
+            </div>
+          )}
+        </div>
+        {success && <p>Redirecting in {count}</p>}
+      </div>
+
+      <style jsx>{`
+        .icon-wrapper {
+          animation: zoom-in 0.5s ease-in-out forwards;
+        }
+
+        @keyframes zoom-in {
+          from {
+            transform: scale(0);
+          }
+          to {
+            transform: scale(1.25);
+          }
+        }
+
+        .check-circle-icon {
+          transform-origin: center;
+        }
+      `}</style>
     </div>
   );
 };

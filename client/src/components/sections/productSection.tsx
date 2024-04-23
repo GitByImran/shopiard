@@ -89,7 +89,7 @@ const ProductSection = () => {
           Our featured products at a glance
         </h2>
         {/* Featured Products Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
           {products
             .slice(0, countProductLength(products))
             .map((product: any) => (
