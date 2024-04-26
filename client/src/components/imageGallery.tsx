@@ -17,9 +17,9 @@ const ImageGallery = ({ images }: any) => {
     };
   }, []);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     console.log("Full screen mode:", isFullScreen);
-  }, [isFullScreen]);
+  }, [isFullScreen]); */
 
   const galleryImages = images.map((image: string) => ({
     original: image,

@@ -20,19 +20,19 @@ export const POST = async (req: Request, res: Response) => {
     formData.append("tran_id", tran_id);
     formData.append(
       "success_url",
-      `https://shopiard.vercel.app/api/gateway/success?id=${tran_id}`
+      `http://localhost:3000/api/gateway/success?id=${tran_id}`
     );
     formData.append(
       "fail_url",
-      `https://shopiard.vercel.app/api/gateway/fail?id=${tran_id}`
+      `http://localhost:3000/api/gateway/fail?id=${tran_id}`
     );
     formData.append(
       "cancel_url",
-      `https://shopiard.vercel.app/api/gateway/cancel?id=${tran_id}`
+      `http://localhost:3000/api/gateway/cancel?id=${tran_id}`
     );
     formData.append(
       "ipn_url",
-      `https://shopiard.vercel.app/api/gateway/ipn?id=${tran_id}`
+      `http://localhost:3000/api/gateway/ipn?id=${tran_id}`
     );
     formData.append("shipping_method", "Courier");
     formData.append("product_name", "Computer.");
@@ -68,3 +68,4 @@ export const POST = async (req: Request, res: Response) => {
 //const store_id = "shopi6623a26b9af0a";
 //const store_passwd = "shopi6623a26b9af0a@ssl";
 //const is_live = false; //true for live, false for sandbox
+//https://shopiard.vercel.app/

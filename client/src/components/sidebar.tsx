@@ -1,5 +1,12 @@
 "use client";
-import { Box, CreditCard, Home, Settings, ShoppingCart } from "lucide-react";
+import {
+  Box,
+  CreditCard,
+  Home,
+  Settings,
+  ShoppingCart,
+  Upload,
+} from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { usePathname } from "next/navigation";
@@ -32,6 +39,11 @@ const User_Dash_Menus = [
     label: "manage orders",
     icon: <Box size={18} />,
     goto: "/dashboard/admin-order",
+  },
+  {
+    label: "upload products",
+    icon: <Upload size={18} />,
+    goto: "/dashboard/admin-upload-product",
   },
   {
     label: "settings",

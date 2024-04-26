@@ -75,7 +75,7 @@ const Navbar = () => {
 
   return (
     <div className="border-b w-full">
-      <div className="container select-none py-4 flex justify-between items-center gap-5">
+      <div className="container select-none py-1 flex justify-between items-center gap-5">
         <div className="logo">
           <Link href={"/"}>
             {" "}
