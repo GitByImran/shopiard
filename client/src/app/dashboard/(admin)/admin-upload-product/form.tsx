@@ -1,11 +1,11 @@
 "use client";
 
-import MultipleImageUploader from "@/components/multipleImageUploader";
-import SingleImageUploader from "@/components/singleImageUploader";
-import RichTextEditor from "@/utils/richTextEditor";
 import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { IProduct } from "@/models/product";
+import MultipleImageUploader from "@/components/multipleImageUploader";
+import SingleImageUploader from "@/components/singleImageUploader";
+import RichTextEditor from "@/utils/richTextEditor";
 
 interface FormData {
   brand: string;
@@ -19,24 +19,7 @@ interface FormData {
   description: string;
 }
 
-const formData: FormData = {
-  brand: "",
-  category: "",
-  title: "",
-  price: "",
-  discountPercentage: "",
-  stock: "",
-  thumbnailImage: "",
-  galleryImages: [],
-  description: "",
-};
-
 const AdminUploadProductForm = () => {
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-
-  console.log(id);
-
   const [formData, setFormData] = useState({
     brand: "",
     category: "",
@@ -50,66 +33,16 @@ const AdminUploadProductForm = () => {
   });
 
   const [formValid, setFormValid] = useState(false);
-
-  const checkFormValidity = () => {
-    const requiredFields: (keyof FormData)[] = [
-      "brand",
-      "category",
-      "title",
-      "price",
-      "stock",
-      "description",
-    ];
-
-    const isRequiredFieldsFilled = requiredFields.every(
-      (field: keyof FormData) => formData[field]
-    );
-
-    const isImageUploaded =
-      formData.thumbnailImage || formData.galleryImages.length > 0;
-    setFormValid(isRequiredFieldsFilled && isImageUploaded ? true : false);
-  };
-
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    console.log("name :", name, "value :", value);
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-    checkFormValidity();
-  };
-
-  const handleThumbnailImageUpload = (imageUrl: string) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      thumbnailImage: imageUrl,
-    }));
-    checkFormValidity();
-  };
-
-  const handleGalleryImagesUpload = (imageUrls: string[]) => {
-    setFormData((prevFormData: any) => ({
-      ...prevFormData,
-      galleryImages: imageUrls,
-    }));
-    checkFormValidity();
-  };
-
-  const handleRichTextEditorChange = (content: any) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      description: content,
-    }));
-    checkFormValidity();
-  };
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
   useEffect(() => {
     if (id) {
       fetchProductsAndFind(id);
     }
-  }, [!id === null]);
+  }, [id]);
 
+  // Fetch products and find the specific product if ID is provided
   const fetchProductsAndFind = async (productId: string) => {
     try {
       const response = await fetch("/api/database/product", {
@@ -117,7 +50,6 @@ const AdminUploadProductForm = () => {
       });
       if (response.ok) {
         const products = await response.json();
-
         const product = products.data.find(
           (product: IProduct) => product._id === productId
         );
@@ -135,7 +67,8 @@ const AdminUploadProductForm = () => {
     }
   };
 
-  const handleSubmit = async (e: any) => {
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(formData);
 
@@ -167,6 +100,64 @@ const AdminUploadProductForm = () => {
     } catch (error) {
       console.error("Error uploading product:", error);
     }
+  };
+
+  // Update form data on input change
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    console.log("name :", name, "value :", value);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+    checkFormValidity();
+  };
+
+  // Update thumbnail image URL
+  const handleThumbnailImageUpload = (imageUrl: string) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      thumbnailImage: imageUrl,
+    }));
+    checkFormValidity();
+  };
+
+  // Update gallery images URLs
+  const handleGalleryImagesUpload = (imageUrls: string[]) => {
+    setFormData((prevFormData: any) => ({
+      ...prevFormData,
+      galleryImages: imageUrls,
+    }));
+    checkFormValidity();
+  };
+
+  // Update rich text editor content
+  const handleRichTextEditorChange = (content: string) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      description: content,
+    }));
+    checkFormValidity();
+  };
+
+  // Check form validity
+  const checkFormValidity = () => {
+    const requiredFields: (keyof FormData)[] = [
+      "brand",
+      "category",
+      "title",
+      "price",
+      "stock",
+      "description",
+    ];
+
+    const isRequiredFieldsFilled = requiredFields.every(
+      (field: keyof FormData) => formData[field]
+    );
+
+    const isImageUploaded =
+      formData.thumbnailImage || formData.galleryImages.length > 0;
+    setFormValid(isRequiredFieldsFilled && isImageUploaded ? true : false);
   };
 
   return (
