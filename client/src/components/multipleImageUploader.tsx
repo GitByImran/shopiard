@@ -2,22 +2,43 @@
 
 import React, { useState, ChangeEvent } from "react";
 import { CloudUpload, ImagePlus, X } from "lucide-react";
+import uploadImageToImgBB from "@/lib/imageUploader";
 
-const MultipleImageUploader = () => {
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+const MultipleImageUploader = ({ onUpload, id }: any) => {
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
 
-  const handleFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files) {
-      const files = event.target.files;
-      const urls = Array.from(files).map((file: File) =>
-        URL.createObjectURL(file)
-      );
-      setSelectedImages((prevImages) => [...prevImages, ...urls]);
+      const files = Array.from(event.target.files) as File[];
+      setSelectedImages((prevImages) => [...prevImages, ...files]);
     }
   };
 
   const handleRemoveImage = (index: number) => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
+  const handleUpload = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    if (selectedImages.length > 0) {
+      setUploading(true);
+      const uploadedImageUrls = [];
+      for (const image of selectedImages) {
+        try {
+          const imageUrl = await uploadImageToImgBB(image);
+          uploadedImageUrls.push(imageUrl);
+        } catch (error) {
+          console.error("Error uploading image:", error);
+        }
+      }
+      onUpload(uploadedImageUrls);
+      setUploading(false);
+    }
   };
 
   return (
@@ -31,29 +52,42 @@ const MultipleImageUploader = () => {
         className="hidden"
       />
       <div className="flex items-center gap-2">
-        <label htmlFor="gallery_images" className="flex-1 cursor-pointer">
+        <label
+          htmlFor="gallery_images"
+          className={`flex-1 cursor-pointer  ${
+            id !== null && "pointer-events-none"
+          }`}
+        >
           <p className="border p-2">
             <span className="border-r-2 pr-2 font-bold text-black/50">
-              Choose File
+              Choose Files
             </span>{" "}
-            <span>
-              {selectedImages ? selectedImages.length : 0} file chosen
-            </span>
+            <span>{selectedImages.length} files chosen</span>
           </p>
         </label>
-        <button className="flex items-center gap-1 border p-2 bg-cyan-600 text-white">
-          <CloudUpload size={20} />
-          Upload
+        <button
+          className="flex items-center gap-1 border p-2 bg-cyan-600 text-white"
+          disabled={selectedImages.length === 0}
+          onClick={handleUpload}
+        >
+          {uploading ? (
+            "Uploading..."
+          ) : (
+            <span className="flex items-center gap-1 ">
+              <CloudUpload size={20} />
+              Upload
+            </span>
+          )}
         </button>
       </div>
       <div className="flex flex-wrap gap-2">
-        {selectedImages.map((imageUrl, index) => (
+        {selectedImages.map((image, index) => (
           <div
             key={index}
             className="relative w-20 h-20 rounded-lg overflow-hidden"
           >
             <img
-              src={imageUrl}
+              src={URL.createObjectURL(image)}
               alt={`Selected ${index}`}
               className="w-full h-full object-cover"
             />
@@ -65,7 +99,7 @@ const MultipleImageUploader = () => {
             </button>
           </div>
         ))}
-        {selectedImages.length >= 1 && (
+        {selectedImages.length > 0 && (
           <div className="relative w-20 h-20 border rounded-lg overflow-hidden">
             <label
               htmlFor="gallery_images"
@@ -79,5 +113,4 @@ const MultipleImageUploader = () => {
     </div>
   );
 };
-
 export default MultipleImageUploader;

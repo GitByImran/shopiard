@@ -2,6 +2,7 @@
 import {
   Box,
   CreditCard,
+  GanttChart,
   Home,
   Settings,
   ShoppingCart,
@@ -44,6 +45,11 @@ const User_Dash_Menus = [
     label: "upload products",
     icon: <Upload size={18} />,
     goto: "/dashboard/admin-upload-product",
+  },
+  {
+    label: "manage products",
+    icon: <GanttChart size={18} />,
+    goto: "/dashboard/admin-manage-product",
   },
   {
     label: "settings",

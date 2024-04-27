@@ -1,17 +1,42 @@
 "use client";
 
-import { CloudUpload, ImageMinus } from "lucide-react";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState } from "react";
+import { CloudUpload, ImageMinus, X } from "lucide-react";
+import uploadImageToImgBB from "@/lib/imageUploader";
 
-const SingleImageUploader = () => {
-  const [selectedImage, setSelectedImage] = useState("");
-  const [fileName, setFileName] = useState<string>("");
+const SingleImageUploader = ({ onUpload, id }: any) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [uploading, setUploading] = useState(false);
 
-  const handleFileSelect = (event: any) => {
-    const file = event.target.files[0];
-    const imageUrl = URL.createObjectURL(file);
-    setSelectedImage(imageUrl);
-    setFileName(file.name);
+  const handleFileSelect = async (event: any) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
+      setSelectedImage(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFileName("");
+    setSelectedImage(null);
+  };
+
+  const handleUpload = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    if (selectedImage) {
+      try {
+        setUploading(true);
+        const imageUrl = await uploadImageToImgBB(selectedImage);
+        onUpload(imageUrl);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      } finally {
+        setUploading(false);
+      }
+    }
   };
 
   return (
@@ -24,40 +49,57 @@ const SingleImageUploader = () => {
         multiple={false}
         className="hidden"
       />
-      <div className="flex items-center gap-2">
-        <label htmlFor="thumbnail_image" className="flex-1 cursor-pointer">
+      <div className={`flex items-center gap-2`}>
+        <label
+          htmlFor="thumbnail_image"
+          className={`flex-1 cursor-pointer  ${
+            id !== null && "pointer-events-none"
+          }`}
+        >
           <p className="border p-2">
             <span className="border-r-2 pr-2 font-bold text-black/50">
               Choose File
             </span>{" "}
-            <span>{fileName ? fileName : "No file chosen"}</span>
+            <span className="truncate">
+              {fileName
+                ? fileName.length > 30
+                  ? fileName.substring(0, 10) + "..."
+                  : fileName
+                : "No file chosen"}
+            </span>
           </p>
         </label>
-        <button className="flex items-center gap-1 border p-2 bg-cyan-600 text-white">
-          <CloudUpload size={20} />
-          Upload
+        <button
+          className="border p-2 bg-cyan-600 text-white"
+          disabled={!selectedImage || uploading}
+          onClick={handleUpload}
+        >
+          {uploading ? (
+            "Uploading..."
+          ) : (
+            <span className="flex items-center gap-1 ">
+              <CloudUpload size={20} />
+              Upload
+            </span>
+          )}
         </button>
       </div>
       {selectedImage && (
         <div className="relative w-20 h-20 rounded-lg overflow-hidden">
           <img
-            src={selectedImage}
+            src={URL.createObjectURL(selectedImage)}
             alt="Selected"
             className="w-full h-full object-cover"
           />
-          <label
-            htmlFor="thumbnail_image"
-            title="change image"
-            className="cursor-pointer"
+          <button
+            className="absolute top-0 right-0 flex justify-center items-center w-full h-full bg-black/50 text-white"
+            onClick={handleRemoveImage}
           >
-            <p className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black/50 text-white">
-              <ImageMinus />
-            </p>
-          </label>
+            <X strokeWidth={3} />
+          </button>
         </div>
       )}
     </div>
   );
 };
-
 export default SingleImageUploader;
