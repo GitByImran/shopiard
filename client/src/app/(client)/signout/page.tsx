@@ -22,7 +22,7 @@ const SignOutPage = () => {
       {/* logout confirmation modal */}
 
       {showModal && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-70 z-50">
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-30 z-50">
           <div className="max-w-[400px] mx-5 bg-white p-8 rounded shadow-lg">
             <h2 className="text-md font-bold mb-2">
               Are you sure you want to sign out?

@@ -14,13 +14,12 @@ import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import ImageGallery from "@/components/imageGallery";
 import { useCart } from "@/utils/cartContext";
-import { getProducts } from "@/lib/product";
+import styles from "./productDescriptionStyles.module.scss";
 
 const ProductDetails = ({ params }: any) => {
+  const { cart, addToCart } = useCart();
   const [product, setProduct] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
-
-  const { cart, addToCart } = useCart();
 
   const handleAddToCart = () => {
     const newItem = {
@@ -31,15 +30,25 @@ const ProductDetails = ({ params }: any) => {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const productsData = await getProducts();
-      const findProductById = productsData.products.find(
-        (item: any) => item.id === parseInt(params.slug[0])
-      );
-      setProduct(findProductById);
+    const fetchProduct = async () => {
+      try {
+        const productId = params?.slug[0];
+        const response = await fetch(`/api/database/product`);
+        const data = await response.json();
+        if (response.ok) {
+          const findProductById = data.data.find(
+            (item: any) => item._id === productId
+          );
+          setProduct(findProductById);
+        } else {
+          console.error("Failed to fetch product");
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
     };
-    fetchProducts();
-  }, []);
+    fetchProduct();
+  }, [params]);
 
   useEffect(() => {
     const foundItem = cart.find((item: any) => item.product.id === product?.id);
@@ -62,9 +71,11 @@ const ProductDetails = ({ params }: any) => {
     return <div className="container">Loading Product...</div>;
   }
 
+  console.log(product);
+
   return (
     <div className="">
-      <div className="container select-none">
+      <div className="container">
         <div>
           <p className="flex items-center flex-wrap gap-2 py-4  text-sm font-semibold capitalize">
             <span>product</span>
@@ -78,7 +89,7 @@ const ProductDetails = ({ params }: any) => {
         </div>
         <div className="flex md:flex-row flex-col gap-10">
           <div className="flex-1">
-            <ImageGallery images={product.images} />
+            <ImageGallery images={product?.galleryImages} />
           </div>
           <div className="flex-1">
             <h2 className="text-2xl font-bold ">{product.title}</h2>
@@ -86,12 +97,12 @@ const ProductDetails = ({ params }: any) => {
             <div className="space-y-4">
               <p className="flex gap-2 items-center">
                 {product.discountPercentage > 0 && (
-                  <sub className="text-slate-400 text-lg">
-                    <del>${product.price}</del>
+                  <sub className="text-slate-400 text-md">
+                    <del>BDT. {product.price}</del>
                   </sub>
                 )}
                 <span className="text-2xl font-bold text-cyan-600">
-                  $
+                  BDT.{" "}
                   {product.discountPercentage > 0
                     ? discountedPrice(product.price, product.discountPercentage)
                     : product.price}
@@ -141,15 +152,15 @@ const ProductDetails = ({ params }: any) => {
                 <button
                   onClick={handleAddToCart}
                   disabled={cart.some(
-                    (item: any) => item.product.id === product.id
+                    (item: any) => item.product._id === product.id
                   )}
                   className={`w-full border p-2 border-none outline-none select-none font-bold ${
-                    cart.some((item: any) => item.product.id === product.id)
+                    cart.some((item: any) => item.product._id === product.id)
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-cyan-600 hover:bg-cyan-800"
                   } text-white`}
                 >
-                  {cart.some((item: any) => item.product.id === product.id)
+                  {cart.some((item: any) => item.product._id === product.id)
                     ? "Already in Cart"
                     : "Add To Cart"}
                 </button>
@@ -162,40 +173,25 @@ const ProductDetails = ({ params }: any) => {
         </div>
 
         {/*  */}
-        <div>
-          <div className="mt-10 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="mt-10 space-y-8">
             <div className="">
               <h2 className="w-fit py-1 border-b-4 border-cyan-600 text-2xl font-bold">
                 Description
               </h2>
               <hr className="border-cyan-600" />
             </div>
-            {/* <p>{product.description}</p> */}
-            <p className="text-slate-600">
-              The iPhone X, a flagship device from Apple Inc., represents a
-              pinnacle of innovation and technology in the realm of smartphones.
-              Renowned for its sleek design, cutting-edge features, and powerful
-              performance, Featuring a glass front and back, stainless steel
-              frame, and edge-to-edge display, the iPhone X exudes premium
-              craftsmanship and attention to detail. Its slim profile and
-              seamless construction make it a pleasure to hold and use, while
-              its durable materials ensure longevity and durability. One of the
-              standout features of the iPhone X is its advanced Face ID
-              technology, which revolutionizes the way users unlock their
-              devices and authenticate securely. With Face ID, users can
-              effortlessly unlock their iPhone X with just a glance, eliminating
-              the need for traditional passwords or fingerprint sensors. Powered
-              by a sophisticated TrueDepth camera system, Face ID accurately
-              maps the user's face in three dimensions, providing unparalleled
-              security and convenience. In addition to Face ID, the iPhone X
-              boasts an impressive array of camera capabilities that empower
-              users to capture stunning photos and videos with ease. Equipped
-              with a dual-camera system, featuring wide and telephoto lenses,
-              the iPhone X delivers breathtaking photography in any lighting
-              condition. From vibrant landscapes to detailed portraits, the
-              iPhone X's camera system excels in capturing the beauty of the
-              world around us.
-            </p>
+            <div className={styles["product-description-container"]}>
+              <div dangerouslySetInnerHTML={{ __html: product.description }} />
+            </div>
+          </div>
+          <div className="mt-10 space-y-8">
+            <div className="">
+              <h2 className="w-fit py-1 border-b-4 border-cyan-600 text-2xl font-bold">
+                Review
+              </h2>
+              <hr className="border-cyan-600" />
+            </div>
           </div>
         </div>
       </div>

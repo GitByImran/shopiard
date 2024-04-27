@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { CloudUpload, ImageMinus, X } from "lucide-react";
 import uploadImageToImgBB from "@/lib/imageUploader";
 
-const SingleImageUploader = ({ onUpload, id }: any) => {
+const SingleImageUploader = ({ onUpload }: any) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -50,12 +50,7 @@ const SingleImageUploader = ({ onUpload, id }: any) => {
         className="hidden"
       />
       <div className={`flex items-center gap-2`}>
-        <label
-          htmlFor="thumbnail_image"
-          className={`flex-1 cursor-pointer  ${
-            id !== null && "pointer-events-none"
-          }`}
-        >
+        <label htmlFor="thumbnail_image" className={`flex-1 cursor-pointer`}>
           <p className="border p-2">
             <span className="border-r-2 pr-2 font-bold text-black/50">
               Choose File

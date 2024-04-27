@@ -166,17 +166,11 @@ return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className={`space-y-2`}>
           <h2 className="font-bold text-slate-600">Thumbnail Image</h2>
-          <SingleImageUploader
-            onUpload={handleThumbnailImageUpload}
-            id={productId}
-          />
+          <SingleImageUploader onUpload={handleThumbnailImageUpload} />
         </div>
         <div className="space-y-2">
           <h2 className="font-bold text-slate-600">Gallery Images</h2>
-          <MultipleImageUploader
-            onUpload={handleGalleryImagesUpload}
-            id={productId}
-          />
+          <MultipleImageUploader onUpload={handleGalleryImagesUpload} />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

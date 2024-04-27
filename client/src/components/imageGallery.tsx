@@ -17,11 +17,7 @@ const ImageGallery = ({ images }: any) => {
     };
   }, []);
 
-  /*   useEffect(() => {
-    console.log("Full screen mode:", isFullScreen);
-  }, [isFullScreen]); */
-
-  const galleryImages = images.map((image: string) => ({
+  const galleryImages = images?.map((image: string) => ({
     original: image,
     thumbnail: image,
 
@@ -43,7 +39,11 @@ const ImageGallery = ({ images }: any) => {
 
   return (
     <div className="">
-      <ReactImageGallery items={galleryImages} />
+      {galleryImages && galleryImages.length > 0 ? (
+        <ReactImageGallery items={galleryImages} />
+      ) : (
+        <div>No images to display</div>
+      )}
       <style jsx global>{`
         .image-gallery-thumbnail-image {
           height: 80px;

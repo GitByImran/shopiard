@@ -5,18 +5,28 @@ import { Eye, PenSquare, SquarePen, Tag, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import LoadingButton from "@/components/loading-button";
 
 const AdminManageProductPage = () => {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
   const fetchProducts = async () => {
-    const getProducts = await fetch("/api/database/product", {
-      method: "GET",
-    });
-    const response = await getProducts.json();
-    setProducts(response.data);
+    try {
+      const getProducts = await fetch("/api/database/product", {
+        method: "GET",
+      });
+      const response = await getProducts.json();
+      setProducts(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setLoading(false);
+    }
   };
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -29,20 +39,35 @@ const AdminManageProductPage = () => {
     router.push(`/dashboard/admin-upload-product?id=${id}`);
   };
 
-  const handleDelete = (id: string) => {
-    router.push(``);
+  const handleDelete = async (id: string) => {
+    try {
+      const deleteProduct = await fetch(`/api/database/product?id=${id}`, {
+        method: "DELETE",
+      });
+      const response = await deleteProduct.json();
+      console.log(response);
+      if (response.success) {
+        fetchProducts();
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setShowModal(false);
+    }
   };
 
   if (!products) {
     return;
   }
-  console.log(products);
+
   return (
     <div>
-      {!products ? (
-        <div>Loading Products ...</div>
+      {loading ? (
+        <div>
+          <LoadingButton />
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {products.map((item: IProduct, index) => (
             <div
               key={index}
@@ -78,9 +103,37 @@ const AdminManageProductPage = () => {
                     <button onClick={() => handleEdit(item._id)}>
                       <PenSquare size={16} />
                     </button>
-                    <button onClick={() => handleDelete(item._id)}>
+                    <button onClick={() => setShowModal(true)}>
                       <Trash size={16} />
                     </button>
+                    {showModal && (
+                      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-30 z-50">
+                        <div className="max-w-[400px] mx-5 bg-white p-8 rounded">
+                          <h2 className="text-md font-bold mb-2">
+                            Are you sure you want to delete this product ?
+                          </h2>
+                          <p className="text-sm mb-4">
+                            This action cannot be undone. This will permanently
+                            delete your product and remove product data from
+                            database.
+                          </p>
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => setShowModal(false)}
+                              className="text-sm px-4 py-2 rounded"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => handleDelete(item._id)}
+                              className="bg-slate-800 text-white text-sm px-5 py-2 rounded"
+                            >
+                              Continue
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
