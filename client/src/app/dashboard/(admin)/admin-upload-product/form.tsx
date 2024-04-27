@@ -3,7 +3,7 @@
 import MultipleImageUploader from "@/components/multipleImageUploader";
 import SingleImageUploader from "@/components/singleImageUploader";
 import RichTextEditor from "@/utils/richTextEditor";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { IProduct } from "@/models/product";
 
@@ -106,7 +106,6 @@ const AdminUploadProductForm = () => {
 
   useEffect(() => {
     if (id) {
-      // Fetch all products first
       fetchProductsAndFind(id);
     }
   }, [!id === null]);
@@ -118,14 +117,13 @@ const AdminUploadProductForm = () => {
       });
       if (response.ok) {
         const products = await response.json();
-        // Find the product with the given id
+
         const product = products.data.find(
           (product: IProduct) => product._id === productId
         );
         if (product) {
-          // Populate form fields with product data
           setFormData(product);
-          setFormValid(true); // Assuming all fields are filled when editing
+          setFormValid(true);
         } else {
           console.error("Product not found.");
         }
@@ -172,99 +170,107 @@ const AdminUploadProductForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className={`space-y-2`}>
-          <h2 className="font-bold text-slate-600">Thumbnail Image</h2>
-          <SingleImageUploader onUpload={handleThumbnailImageUpload} id={id} />
+    <Suspense>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className={`space-y-2`}>
+            <h2 className="font-bold text-slate-600">Thumbnail Image</h2>
+            <SingleImageUploader
+              onUpload={handleThumbnailImageUpload}
+              id={id}
+            />
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-bold text-slate-600">Gallery Images</h2>
+            <MultipleImageUploader
+              onUpload={handleGalleryImagesUpload}
+              id={id}
+            />
+          </div>
         </div>
-        <div className="space-y-2">
-          <h2 className="font-bold text-slate-600">Gallery Images</h2>
-          <MultipleImageUploader onUpload={handleGalleryImagesUpload} id={id} />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <select
-          name="category"
-          id="category"
-          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-          onChange={handleChange}
-          value={formData.category}
-        >
-          <option value="">select the product category</option>
-          {[
-            "smartphones",
-            "laptops",
-            "fragrances",
-            "skincare",
-            "groceries",
-            "home-decoration",
-          ].map((item, index) => (
-            <option key={index} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-        <input
-          name="brand"
-          id="brand"
-          placeholder="enter the product brand"
-          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-          onChange={handleChange}
-          value={formData.brand}
-        />
-
-        <input
-          type="text"
-          name="title"
-          placeholder="enter the product name"
-          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-          onChange={handleChange}
-          value={formData.title}
-        />
-
-        <input
-          type="number"
-          name="price"
-          placeholder="enter the product price"
-          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-          onChange={handleChange}
-          value={formData.price}
-        />
-        <input
-          type="number"
-          name="discountPercentage"
-          placeholder="enter the discount price (0 for no-discount)"
-          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-          onChange={handleChange}
-          value={formData.discountPercentage}
-        />
-
-        <input
-          type="number"
-          name="stock"
-          placeholder="enter the stock amount"
-          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-          onChange={handleChange}
-          value={formData.stock}
-        />
-        <div className="col-span-3">
-          <RichTextEditor
-            value={formData.description}
-            onChange={handleRichTextEditorChange}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <select
+            name="category"
+            id="category"
+            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+            onChange={handleChange}
+            value={formData.category}
+          >
+            <option value="">select the product category</option>
+            {[
+              "smartphones",
+              "laptops",
+              "fragrances",
+              "skincare",
+              "groceries",
+              "home-decoration",
+            ].map((item, index) => (
+              <option key={index} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+          <input
+            name="brand"
+            id="brand"
+            placeholder="enter the product brand"
+            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+            onChange={handleChange}
+            value={formData.brand}
           />
+
+          <input
+            type="text"
+            name="title"
+            placeholder="enter the product name"
+            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+            onChange={handleChange}
+            value={formData.title}
+          />
+
+          <input
+            type="number"
+            name="price"
+            placeholder="enter the product price"
+            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+            onChange={handleChange}
+            value={formData.price}
+          />
+          <input
+            type="number"
+            name="discountPercentage"
+            placeholder="enter the discount price (0 for no-discount)"
+            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+            onChange={handleChange}
+            value={formData.discountPercentage}
+          />
+
+          <input
+            type="number"
+            name="stock"
+            placeholder="enter the stock amount"
+            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+            onChange={handleChange}
+            value={formData.stock}
+          />
+          <div className="col-span-3">
+            <RichTextEditor
+              value={formData.description}
+              onChange={handleRichTextEditorChange}
+            />
+          </div>
         </div>
-      </div>
-      <button
-        className={`sm:w-fit w-full px-10 py-2 bg-cyan-600 text-white ${
-          !formValid && "cursor-not-allowed bg-gray-500"
-        }`}
-        type="submit"
-        disabled={!formValid}
-      >
-        Submit
-      </button>
-    </form>
+        <button
+          className={`sm:w-fit w-full px-10 py-2 bg-cyan-600 text-white ${
+            !formValid && "cursor-not-allowed bg-gray-500"
+          }`}
+          type="submit"
+          disabled={!formValid}
+        >
+          Submit
+        </button>
+      </form>
+    </Suspense>
   );
 };
 
