@@ -33,236 +33,236 @@ const AdminUploadProductForm = () => {
   });
 
   const [formValid, setFormValid] = useState(false);
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+const [productId, setProductId] = useState<string>("");
 
-  useEffect(() => {
-    if (id) {
-      fetchProductsAndFind(id);
-    }
-  }, [id]);
-
-  // Fetch products and find the specific product if ID is provided
-  const fetchProductsAndFind = async (productId: string) => {
-    try {
-      const response = await fetch("/api/database/product", {
-        method: "GET",
-      });
-      if (response.ok) {
-        const products = await response.json();
-        const product = products.data.find(
-          (product: IProduct) => product._id === productId
-        );
-        if (product) {
-          setFormData(product);
-          setFormValid(true);
-        } else {
-          console.error("Product not found.");
-        }
+// Fetch products and find the specific product if ID is provided
+const fetchProductsAndFind = async (productId: string) => {
+  try {
+    setProductId(productId);
+    const response = await fetch("/api/database/product", {
+      method: "GET",
+    });
+    if (response.ok) {
+      const products = await response.json();
+      const product = products.data.find(
+        (product: IProduct) => product._id === productId
+      );
+      if (product) {
+        setFormData(product);
+        setFormValid(true);
       } else {
-        console.error("Error fetching products:", response.statusText);
+        console.error("Product not found.");
       }
-    } catch (error) {
-      console.error("Error fetching products:", error);
+    } else {
+      console.error("Error fetching products:", response.statusText);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
+};
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(formData);
+useEffect(() => {
+  const id = new URLSearchParams(window.location.search).get("id");
+  if (id) {
+    fetchProductsAndFind(id);
+  }
+}, []);
+// Handle form submission
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  console.log(formData);
 
-    try {
-      const response = await fetch("/api/database/product", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+  try {
+    const response = await fetch("/api/database/product", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+    if (response.ok) {
+      console.log("Product uploaded successfully!");
+      setFormData({
+        ...formData,
+        brand: "",
+        title: "",
+        price: "",
+        discountPercentage: "",
+        stock: "",
+        thumbnailImage: "",
+        galleryImages: [],
+        description: "",
       });
-      if (response.ok) {
-        console.log("Product uploaded successfully!");
-        setFormData({
-          ...formData,
-          brand: "",
-          title: "",
-          price: "",
-          discountPercentage: "",
-          stock: "",
-          thumbnailImage: "",
-          galleryImages: [],
-          description: "",
-        });
-        setFormValid(false);
-      } else {
-        console.error("Error uploading product:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error uploading product:", error);
+      setFormValid(false);
+    } else {
+      console.error("Error uploading product:", response.statusText);
     }
-  };
+  } catch (error) {
+    console.error("Error uploading product:", error);
+  }
+};
 
-  // Update form data on input change
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    console.log("name :", name, "value :", value);
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-    checkFormValidity();
-  };
+// Update form data on input change
+const handleChange = (e: any) => {
+  const { name, value } = e.target;
+  console.log("name :", name, "value :", value);
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    [name]: value,
+  }));
+  checkFormValidity();
+};
 
-  // Update thumbnail image URL
-  const handleThumbnailImageUpload = (imageUrl: string) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      thumbnailImage: imageUrl,
-    }));
-    checkFormValidity();
-  };
+// Update thumbnail image URL
+const handleThumbnailImageUpload = (imageUrl: string) => {
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    thumbnailImage: imageUrl,
+  }));
+  checkFormValidity();
+};
 
-  // Update gallery images URLs
-  const handleGalleryImagesUpload = (imageUrls: string[]) => {
-    setFormData((prevFormData: any) => ({
-      ...prevFormData,
-      galleryImages: imageUrls,
-    }));
-    checkFormValidity();
-  };
+// Update gallery images URLs
+const handleGalleryImagesUpload = (imageUrls: string[]) => {
+  setFormData((prevFormData: any) => ({
+    ...prevFormData,
+    galleryImages: imageUrls,
+  }));
+  checkFormValidity();
+};
 
-  // Update rich text editor content
-  const handleRichTextEditorChange = (content: string) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      description: content,
-    }));
-    checkFormValidity();
-  };
+// Update rich text editor content
+const handleRichTextEditorChange = (content: string) => {
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    description: content,
+  }));
+  checkFormValidity();
+};
 
-  // Check form validity
-  const checkFormValidity = () => {
-    const requiredFields: (keyof FormData)[] = [
-      "brand",
-      "category",
-      "title",
-      "price",
-      "stock",
-      "description",
-    ];
+// Check form validity
+const checkFormValidity = () => {
+  const requiredFields: (keyof FormData)[] = [
+    "brand",
+    "category",
+    "title",
+    "price",
+    "stock",
+    "description",
+  ];
 
-    const isRequiredFieldsFilled = requiredFields.every(
-      (field: keyof FormData) => formData[field]
-    );
-
-    const isImageUploaded =
-      formData.thumbnailImage || formData.galleryImages.length > 0;
-    setFormValid(isRequiredFieldsFilled && isImageUploaded ? true : false);
-  };
-
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className={`space-y-2`}>
-            <h2 className="font-bold text-slate-600">Thumbnail Image</h2>
-            <SingleImageUploader
-              onUpload={handleThumbnailImageUpload}
-              id={id}
-            />
-          </div>
-          <div className="space-y-2">
-            <h2 className="font-bold text-slate-600">Gallery Images</h2>
-            <MultipleImageUploader
-              onUpload={handleGalleryImagesUpload}
-              id={id}
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          <select
-            name="category"
-            id="category"
-            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-            onChange={handleChange}
-            value={formData.category}
-          >
-            <option value="">select the product category</option>
-            {[
-              "smartphones",
-              "laptops",
-              "fragrances",
-              "skincare",
-              "groceries",
-              "home-decoration",
-            ].map((item, index) => (
-              <option key={index} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-          <input
-            name="brand"
-            id="brand"
-            placeholder="enter the product brand"
-            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-            onChange={handleChange}
-            value={formData.brand}
-          />
-
-          <input
-            type="text"
-            name="title"
-            placeholder="enter the product name"
-            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-            onChange={handleChange}
-            value={formData.title}
-          />
-
-          <input
-            type="number"
-            name="price"
-            placeholder="enter the product price"
-            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-            onChange={handleChange}
-            value={formData.price}
-          />
-          <input
-            type="number"
-            name="discountPercentage"
-            placeholder="enter the discount price (0 for no-discount)"
-            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-            onChange={handleChange}
-            value={formData.discountPercentage}
-          />
-
-          <input
-            type="number"
-            name="stock"
-            placeholder="enter the stock amount"
-            className="border border-slate-300 focus-visible:outline-slate-600 p-2"
-            onChange={handleChange}
-            value={formData.stock}
-          />
-          <div className="col-span-3">
-            <RichTextEditor
-              value={formData.description}
-              onChange={handleRichTextEditorChange}
-            />
-          </div>
-        </div>
-        <button
-          className={`sm:w-fit w-full px-10 py-2 bg-cyan-600 text-white ${
-            !formValid && "cursor-not-allowed bg-gray-500"
-          }`}
-          type="submit"
-          disabled={!formValid}
-        >
-          Submit
-        </button>
-      </form>
-    </Suspense>
+  const isRequiredFieldsFilled = requiredFields.every(
+    (field: keyof FormData) => formData[field]
   );
+
+  const isImageUploaded =
+    formData.thumbnailImage || formData.galleryImages.length > 0;
+  setFormValid(isRequiredFieldsFilled && isImageUploaded ? true : false);
+};
+
+return (
+  <Suspense fallback={<div>Loading...</div>}>
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className={`space-y-2`}>
+          <h2 className="font-bold text-slate-600">Thumbnail Image</h2>
+          <SingleImageUploader
+            onUpload={handleThumbnailImageUpload}
+            id={productId}
+          />
+        </div>
+        <div className="space-y-2">
+          <h2 className="font-bold text-slate-600">Gallery Images</h2>
+          <MultipleImageUploader
+            onUpload={handleGalleryImagesUpload}
+            id={productId}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <select
+          name="category"
+          id="category"
+          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+          onChange={handleChange}
+          value={formData.category}
+        >
+          <option value="">select the product category</option>
+          {[
+            "smartphones",
+            "laptops",
+            "fragrances",
+            "skincare",
+            "groceries",
+            "home-decoration",
+          ].map((item, index) => (
+            <option key={index} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+        <input
+          name="brand"
+          id="brand"
+          placeholder="enter the product brand"
+          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+          onChange={handleChange}
+          value={formData.brand}
+        />
+
+        <input
+          type="text"
+          name="title"
+          placeholder="enter the product name"
+          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+          onChange={handleChange}
+          value={formData.title}
+        />
+
+        <input
+          type="number"
+          name="price"
+          placeholder="enter the product price"
+          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+          onChange={handleChange}
+          value={formData.price}
+        />
+        <input
+          type="number"
+          name="discountPercentage"
+          placeholder="enter the discount price (0 for no-discount)"
+          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+          onChange={handleChange}
+          value={formData.discountPercentage}
+        />
+
+        <input
+          type="number"
+          name="stock"
+          placeholder="enter the stock amount"
+          className="border border-slate-300 focus-visible:outline-slate-600 p-2"
+          onChange={handleChange}
+          value={formData.stock}
+        />
+        <div className="col-span-3">
+          <RichTextEditor
+            value={formData.description}
+            onChange={handleRichTextEditorChange}
+          />
+        </div>
+      </div>
+      <button
+        className={`sm:w-fit w-full px-10 py-2 bg-cyan-600 text-white ${
+          !formValid && "cursor-not-allowed bg-gray-500"
+        }`}
+        type="submit"
+        disabled={!formValid}
+      >
+        Submit
+      </button>
+    </form>
+  </Suspense>
+);
 };
 
 export default AdminUploadProductForm;
