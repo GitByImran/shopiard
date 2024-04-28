@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/utils/db";
-import ProductModel, { IProduct } from "@/models/product";
 import { parse } from "querystring";
+import UserModel, { IUser } from "@/models/user";
 
 export const DELETE = async (request: NextRequest, response: NextResponse) => {
   if (request.method !== "DELETE") {
@@ -14,33 +14,31 @@ export const DELETE = async (request: NextRequest, response: NextResponse) => {
     const query = request.url.split("?")[1];
     const queryParams = parse(query || "");
 
-    const { id } = queryParams;
+    const { email } = queryParams;
 
-    console.log("id", id);
+    console.log("email", email);
 
-    if (!id || typeof id !== "string") {
+    if (!email || typeof email !== "string") {
       return NextResponse.json({
         success: false,
-        error: "Invalid id provided in the query",
+        error: "Invalid email provided in the query",
       });
     }
 
-    const deletedProduct: IProduct | null = await ProductModel.findOneAndDelete(
-      {
-        _id: id,
-      }
-    );
+    const deletedProduct: IUser | null = await UserModel.findOneAndDelete({
+      email: email,
+    });
 
     if (!deletedProduct) {
       return NextResponse.json({
         success: false,
-        error: "Product with the provided id not found",
+        error: "Product with the provided email not found",
       });
     }
 
     return NextResponse.json({
       success: true,
-      message: "Product deleted successfully",
+      message: "User deleted successfully",
     });
   } catch (error: any) {
     console.error("Error:", error);

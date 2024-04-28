@@ -83,7 +83,7 @@ const ProductSection = () => {
     fetchProducts();
   }, []);
 
-  console.log(categories);
+  // console.log(categories);
 
   return (
     <div className="my-10 space-y-10">

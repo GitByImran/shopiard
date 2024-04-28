@@ -21,7 +21,14 @@ export const authOptions: any = {
               user?.password
             );
             if (matchPassword) {
-              return user;
+              console.log(user);
+              return {
+                ...user,
+                name: user.name,
+                email: user.email,
+                image: user.image,
+                isAdmin: user.isAdmin,
+              };
             }
           }
           return null;
@@ -32,14 +39,12 @@ export const authOptions: any = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account }: any) {
-      if (account) {
-        token.accessToken = account.access_token;
-      }
+    async jwt({ token, account, user }: any) {
+      if (user) token.isAdmin = user.isAdmin;
       return token;
     },
-    async session({ session, token }: any) {
-      session.accessToken = token.accessToken;
+    async session({ session, token, user }: any) {
+      if (session?.user) session.user.isAdmin = token.isAdmin;
       return session;
     },
   },

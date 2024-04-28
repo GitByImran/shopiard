@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CloudUpload, ImageMinus, X } from "lucide-react";
 import uploadImageToImgBB from "@/lib/imageUploader";
 
-const SingleImageUploader = ({ onUpload }: any) => {
+const SingleImageUploader = ({ onUpload, existingImage }: any) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -21,6 +21,12 @@ const SingleImageUploader = ({ onUpload }: any) => {
     setFileName("");
     setSelectedImage(null);
   };
+
+  useEffect(() => {
+    if (existingImage) {
+      setSelectedImage(existingImage);
+    }
+  }, [existingImage]);
 
   const handleUpload = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -49,7 +55,13 @@ const SingleImageUploader = ({ onUpload }: any) => {
         multiple={false}
         className="hidden"
       />
-      <div className={`flex items-center gap-2`}>
+      <div
+        className={`flex items-center gap-2 ${
+          existingImage
+            ? "pointer-events-none cursor-not-allowed"
+            : "pointer-events-auto"
+        }`}
+      >
         <label htmlFor="thumbnail_image" className={`flex-1 cursor-pointer`}>
           <p className="border p-2">
             <span className="border-r-2 pr-2 font-bold text-black/50">
@@ -80,18 +92,26 @@ const SingleImageUploader = ({ onUpload }: any) => {
         </button>
       </div>
       {selectedImage && (
-        <div className="relative w-20 h-20 rounded-lg overflow-hidden">
+        <div
+          className={`relative w-20 h-20 border rounded-lg overflow-hidden ${
+            existingImage && "opacity-50"
+          }`}
+        >
           <img
-            src={URL.createObjectURL(selectedImage)}
+            src={
+              existingImage ? existingImage : URL.createObjectURL(selectedImage)
+            }
             alt="Selected"
             className="w-full h-full object-cover"
           />
-          <button
-            className="absolute top-0 right-0 flex justify-center items-center w-full h-full bg-black/50 text-white"
-            onClick={handleRemoveImage}
-          >
-            <X strokeWidth={3} />
-          </button>
+          {!existingImage && (
+            <button
+              className={`absolute top-0 right-0 flex justify-center items-center w-full h-full bg-black/50 text-white`}
+              onClick={handleRemoveImage}
+            >
+              <X strokeWidth={3} />
+            </button>
+          )}
         </div>
       )}
     </div>

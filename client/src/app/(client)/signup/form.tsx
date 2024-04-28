@@ -163,10 +163,7 @@ const SignUpForm = () => {
             </div>
             <button
               type="submit"
-              className={`border rounded-md p-2 block w-full bg-cyan-600 text-white hover:bg-cyan-700 ${
-                !isFormValid && "opacity-50 cursor-not-allowed"
-              }`}
-              disabled={!isFormValid}
+              className={`border rounded-md p-2 block w-full bg-cyan-600 text-white hover:bg-cyan-700`}
             >
               <span className="select-none">
                 {isSubmitting ? "Creating New Account..." : "Sign Up"}

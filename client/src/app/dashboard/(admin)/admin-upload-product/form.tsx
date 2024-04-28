@@ -67,21 +67,31 @@ useEffect(() => {
     fetchProductsAndFind(id);
   }
 }, []);
-// Handle form submission
+
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   console.log(formData);
 
   try {
-    const response = await fetch("/api/database/product", {
-      method: "POST",
+    const url = productId
+      ? `/api/database/product?id=${productId}`
+      : "/api/database/product";
+    const method = productId ? "PUT" : "POST";
+
+    const response = await fetch(url, {
+      method: method,
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
+
     if (response.ok) {
-      console.log("Product uploaded successfully!");
+      console.log(
+        "Product",
+        productId ? "updated" : "uploaded",
+        "successfully!"
+      );
       setFormData({
         ...formData,
         brand: "",
@@ -95,10 +105,20 @@ const handleSubmit = async (e: React.FormEvent) => {
       });
       setFormValid(false);
     } else {
-      console.error("Error uploading product:", response.statusText);
+      console.error(
+        "Error",
+        productId ? "updating" : "uploading",
+        "product:",
+        response.statusText
+      );
     }
   } catch (error) {
-    console.error("Error uploading product:", error);
+    console.error(
+      "Error",
+      productId ? "updating" : "uploading",
+      "product:",
+      error
+    );
   }
 };
 
@@ -164,13 +184,19 @@ return (
   <Suspense fallback={<div>Loading...</div>}>
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className={`space-y-2`}>
+        <div className="space-y-2">
           <h2 className="font-bold text-slate-600">Thumbnail Image</h2>
-          <SingleImageUploader onUpload={handleThumbnailImageUpload} />
+          <SingleImageUploader
+            onUpload={handleThumbnailImageUpload}
+            existingImage={productId ? formData.thumbnailImage : null}
+          />
         </div>
         <div className="space-y-2">
           <h2 className="font-bold text-slate-600">Gallery Images</h2>
-          <MultipleImageUploader onUpload={handleGalleryImagesUpload} />
+          <MultipleImageUploader
+            onUpload={handleGalleryImagesUpload}
+            existingImages={productId ? formData.galleryImages : []}
+          />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -245,15 +271,27 @@ return (
           />
         </div>
       </div>
-      <button
-        className={`sm:w-fit w-full px-10 py-2 bg-cyan-600 text-white ${
-          !formValid && "cursor-not-allowed bg-gray-500"
-        }`}
-        type="submit"
-        disabled={!formValid}
-      >
-        Submit
-      </button>
+      {!productId ? (
+        <button
+          className={`sm:w-fit w-full px-10 py-2 bg-cyan-600 text-white ${
+            !formValid && "cursor-not-allowed bg-gray-500"
+          }`}
+          type="submit"
+          disabled={!formValid}
+        >
+          Submit
+        </button>
+      ) : (
+        <button
+          className={`sm:w-fit w-full px-10 py-2 bg-cyan-600 text-white ${
+            !formValid && "cursor-not-allowed bg-gray-500"
+          }`}
+          type="submit"
+          disabled={!formValid}
+        >
+          Update
+        </button>
+      )}
     </form>
   </Suspense>
 );

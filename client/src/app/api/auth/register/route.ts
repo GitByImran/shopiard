@@ -23,6 +23,8 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       name,
       email,
       password: hashedPassword,
+      image: "",
+      isAdmin: false,
     });
     await newUser.save();
     console.log("user created", newUser);
