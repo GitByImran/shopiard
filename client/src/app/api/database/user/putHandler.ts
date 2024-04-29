@@ -1,63 +1,51 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/utils/db";
-import ProductModel, { IProduct } from "@/models/product";
-import { parse } from "querystring";
+import UserModel, { IUser } from "@/models/user";
 
 export const PUT = async (request: NextRequest, response: NextResponse) => {
   if (request.method !== "PUT") {
     return NextResponse.json({ message: "Method Not Allowed" });
   }
+
   await connect();
 
   try {
-    const query = request.url.split("?")[1];
-    const queryParams = parse(query || "");
+    const requestData = await request.json();
 
-    const { id } = queryParams;
+    if (!requestData || typeof requestData !== "object") {
+      throw new Error("Invalid request body");
+    }
 
-    console.log("id", id);
+    // Extract data from the request body
+    const { email, name, image }: Partial<IUser> = requestData;
 
-    if (!id || typeof id !== "string") {
+    console.log(
+      "requested data : ---------------------------------------",
+      requestData
+    );
+
+    if (!email || typeof email !== "string") {
+      throw new Error("Invalid email provided in the request body");
+    }
+
+    // Find the user by email
+    const user: IUser | null = await UserModel.findOne({ email });
+
+    if (!user) {
       return NextResponse.json({
         success: false,
-        error: "Invalid id provided in the query",
+        error: "User not found",
       });
     }
 
-    const {
-      brand,
-      category,
-      title,
-      price,
-      discountPercentage,
-      stock,
-      thumbnailImage,
-      galleryImages,
-      description,
-    } = await request.json();
+    // Update user fields if provided in the request body
+    if (name) user.name = name;
+    if (image) user.image = image;
 
-    const existingProduct = await ProductModel.findById(id);
+    // Save the updated user
+    const updatedUser = await user.save();
 
-    if (!existingProduct) {
-      return NextResponse.json({
-        success: false,
-        error: "Product not found",
-      });
-    }
-
-    existingProduct.brand = brand;
-    existingProduct.category = category;
-    existingProduct.title = title;
-    existingProduct.price = price;
-    existingProduct.discountPercentage = discountPercentage;
-    existingProduct.stock = stock;
-    existingProduct.thumbnailImage = thumbnailImage;
-    existingProduct.galleryImages = galleryImages;
-    existingProduct.description = description;
-
-    await existingProduct.save();
-
-    return NextResponse.json({ success: true, data: existingProduct });
+    return NextResponse.json({ success: true, data: updatedUser });
   } catch (error: any) {
     console.error("Error:", error);
     return NextResponse.json({ success: false, error: error.message });

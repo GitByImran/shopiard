@@ -30,7 +30,7 @@ const SignInForm = () => {
         toast({
           title: "Authentication successful.",
         });
-        router.push("/");
+        router.back();
       } else {
         toast({
           title:
