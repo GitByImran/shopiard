@@ -123,7 +123,7 @@ const ProfileSetup = ({ session }: any) => {
                 </p>
               </label>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col items-start gap-2">
               <input
                 type="text"
                 className="sm:w-fit sm:m-0 w-full mx-auto text-sm border py-1 px-2 text-slate-800"
@@ -161,7 +161,7 @@ const ProfileSetup = ({ session }: any) => {
             </div>
           </form>
         ) : (
-          <div className="border p-5 flex items-center gap-5 relative">
+          <div className="border p-5 flex sm:flex-row flex-col items-center gap-5 relative">
             <div className="max-w-[80px] max-h-[80px] rounded-full overflow-hidden border-2">
               <img
                 src={
@@ -171,12 +171,8 @@ const ProfileSetup = ({ session }: any) => {
                 className="w-full h-full object-center"
               />
             </div>
-            <div>
+            <div className="flex flex-col items-center sm:block">
               <h2 className="font-bold mb-2">{session.user.name}</h2>
-              <p className="text-sm font-semibold text-slate-600 flex items-center gap-1">
-                <Mail size={16} />
-                {session.user.email}
-              </p>
               <p className="text-sm font-semibold text-slate-600 flex items-center gap-1">
                 {session.user.isAdmin ? (
                   <>
@@ -189,6 +185,10 @@ const ProfileSetup = ({ session }: any) => {
                     User
                   </>
                 )}
+              </p>
+              <p className="text-sm font-semibold text-slate-600 flex items-center gap-1">
+                <Mail size={16} />
+                {session.user.email}
               </p>
             </div>
             <button

@@ -25,14 +25,14 @@ export const DELETE = async (request: NextRequest, response: NextResponse) => {
       });
     }
 
-    const deletedProduct: IUser | null = await UserModel.findOneAndDelete({
+    const existedUser: IUser | null = await UserModel.findOneAndDelete({
       email: email,
     });
 
-    if (!deletedProduct) {
+    if (!existedUser) {
       return NextResponse.json({
         success: false,
-        error: "Product with the provided email not found",
+        error: "User with the provided email not found",
       });
     }
 

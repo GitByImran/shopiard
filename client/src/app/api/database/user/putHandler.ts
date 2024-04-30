@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/utils/db";
 import UserModel, { IUser } from "@/models/user";
+import bcrypt from "bcrypt";
 
 export const PUT = async (request: NextRequest, response: NextResponse) => {
   if (request.method !== "PUT") {
@@ -16,19 +17,12 @@ export const PUT = async (request: NextRequest, response: NextResponse) => {
       throw new Error("Invalid request body");
     }
 
-    // Extract data from the request body
-    const { email, name, image }: Partial<IUser> = requestData;
-
-    console.log(
-      "requested data : ---------------------------------------",
-      requestData
-    );
+    const { email, name, image, oldPassword, newPassword } = requestData;
 
     if (!email || typeof email !== "string") {
       throw new Error("Invalid email provided in the request body");
     }
 
-    // Find the user by email
     const user: IUser | null = await UserModel.findOne({ email });
 
     if (!user) {
@@ -38,11 +32,25 @@ export const PUT = async (request: NextRequest, response: NextResponse) => {
       });
     }
 
-    // Update user fields if provided in the request body
-    if (name) user.name = name;
-    if (image) user.image = image;
+    if (oldPassword && newPassword) {
+      // Change password
+      const passwordMatch = await bcrypt.compare(oldPassword, user.password);
 
-    // Save the updated user
+      if (!passwordMatch) {
+        return NextResponse.json({
+          success: false,
+          error: "Old password does not match",
+        });
+      }
+
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedNewPassword;
+    } else {
+      // Update user profile
+      if (name) user.name = name;
+      if (image) user.image = image;
+    }
+
     const updatedUser = await user.save();
 
     return NextResponse.json({ success: true, data: updatedUser });
