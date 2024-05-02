@@ -74,7 +74,7 @@ const Navbar = () => {
   }, [authMenuRef]);
 
   return (
-    <div className="border-b w-full">
+    <div className="border-b w-full sticky top-0 z-50 bg-white">
       <div className="container select-none py-1 flex justify-between items-center gap-5">
         <div className="logo">
           <Link href={"/"}>

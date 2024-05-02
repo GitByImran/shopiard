@@ -6,6 +6,7 @@ import AuthProvider from "@/utils/sessionProvider";
 import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { CartProvider } from "@/utils/cartContext";
+import TanstackProvider from "../../provider/tanstackProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,13 +20,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${inter.className}`} suppressHydrationWarning={true}>
-        <AuthProvider session={session}>
-          <CartProvider>
-            <Navbar />
-            {children}
-            <Toaster />
-          </CartProvider>
-        </AuthProvider>
+        <TanstackProvider>
+          <AuthProvider session={session}>
+            <CartProvider>
+              <Navbar />
+              {children}
+              <Toaster />
+            </CartProvider>
+          </AuthProvider>
+        </TanstackProvider>
       </body>
     </html>
   );

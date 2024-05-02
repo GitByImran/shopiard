@@ -1,24 +1,36 @@
 "use client";
 
+import LoadingButton from "@/components/loading-button";
 import ProductCard from "@/components/productCard";
 import { getProducts } from "@/lib/product";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useGetProducts } from "../../../../lib/QueryAndMutation";
 
 const Product = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const productsData = await getProducts();
-      setProducts(productsData.products);
-    };
-    fetchProducts();
-  }, []);
+  const { data, isLoading, isError, isSuccess } = useGetProducts();
 
-  const totalProducts = products.length;
+  useEffect(() => {
+    setProducts(data);
+  }, [isSuccess]);
+
+  if (isLoading) {
+    return (
+      <div className="container">
+        <LoadingButton />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div className="container">Falied to get user data!</div>;
+  }
+
+  const totalProducts = products?.length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
 
   const handlePageClick = (page: number) => {
@@ -52,17 +64,20 @@ const Product = () => {
     }
   };
 
+  console.log(products);
+
   return (
     <div className="container my-10">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-8">
-        {products
-          .slice(
-            (currentPage - 1) * productsPerPage,
-            currentPage * productsPerPage
-          )
-          .map((product: any) => (
-            <ProductCard product={product} key={product.id} />
-          ))}
+        {products &&
+          products
+            .slice(
+              (currentPage - 1) * productsPerPage,
+              currentPage * productsPerPage
+            )
+            .map((product: any) => (
+              <ProductCard product={product} key={product._id} />
+            ))}
       </div>
       <div className="flex justify-center items-center gap-5 mt-10">
         <button

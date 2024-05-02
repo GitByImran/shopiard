@@ -14,6 +14,8 @@ import React, { useState, ChangeEvent } from "react";
 import LoadingButton from "./loading-button";
 import uploadImageToImgBB from "@/lib/imageUploader";
 import { useRouter } from "next/navigation";
+import { useUpdateUser } from "../../lib/QueryAndMutation";
+import { toast } from "./ui/use-toast";
 
 interface UserProfile {
   name: string;
@@ -31,6 +33,7 @@ const ProfileSetup = ({ session }: any) => {
     );
   }
   const router = useRouter();
+  const { mutateAsync: updateUserMutation } = useUpdateUser();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [updatedName, setUpdatedName] = useState<string>("");
   const [updatedEmail, setUpdatedEmail] = useState<string>("");
@@ -72,25 +75,20 @@ const ProfileSetup = ({ session }: any) => {
         image: imageUrl,
       };
 
-      const response = await fetch(
-        `/api/database/user?email=${session.user.email}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedUserData),
-        }
-      );
+      const response = await updateUserMutation({
+        email: session.user.email,
+        userData: updatedUserData,
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to update user information");
+      if (response.ok) {
+        router.push("/signin");
+        setEditMode(false);
+      } else {
+        setEditMode(false);
+        toast({
+          title: "Failed to update user!!",
+        });
       }
-
-      // verify user again
-      router.push("/signin");
-
-      setEditMode(false);
     } catch (error) {
       console.error("Error updating user information:", error);
     }
@@ -134,7 +132,7 @@ const ProfileSetup = ({ session }: any) => {
                 type="email"
                 className="sm:w-fit sm:m-0 w-full mx-auto text-sm border py-1 px-2 text-slate-800"
                 placeholder={session.user.email}
-                onChange={handleImageChange}
+                onChange={handleEmailChange}
               />
               <p className="text-xs">
                 * If you change your email once, you have to login with new

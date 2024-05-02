@@ -1,5 +1,3 @@
-"use client";
-
 import { useCart } from "@/utils/cartContext";
 import { CircleCheck, CirclePlus, ShoppingCart } from "lucide-react";
 import Link from "next/link";
@@ -26,11 +24,11 @@ const ProductCard = ({ product }: any) => {
     setShowModal(!showModal);
   };
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="border rounded-lg overflow-hidden" key={product._id}>
       <div className="h-28 sm:h-52 w-full">
-        <Link href={`/product/${product?.id}`}>
+        <Link href={`/product/${product?._id}`}>
           <img
-            src={product.thumbnail}
+            src={product.thumbnailImage}
             alt={product.title}
             className="h-full w-full object-cover select-none"
           />
@@ -40,7 +38,8 @@ const ProductCard = ({ product }: any) => {
         <h3 className="truncate select-none">{product.title}</h3>
         <div className="flex items-center justify-between">
           <p className="font-bold select-none">
-            ${product.discountPercentage > 0 ? discountedPrice : product.price}
+            BDT{" "}
+            {product.discountPercentage > 0 ? discountedPrice : product.price}
           </p>
           <button className="" onClick={handleAddToCart}>
             <span

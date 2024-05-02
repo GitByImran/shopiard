@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "./ui/use-toast";
+import { useDeleteUser } from "../../lib/QueryAndMutation";
 
 const DeleteAccount = ({ session }: any) => {
   const router = useRouter();
   const [showAccountDeleteModal, setShowAccountDeleteModal] =
     useState<boolean>(false);
+
+  const { mutate: deleteUserMutation, isError } = useDeleteUser();
 
   const handleOpenAccountDeleteModal = () => {
     setShowAccountDeleteModal(!showAccountDeleteModal);
@@ -13,20 +16,17 @@ const DeleteAccount = ({ session }: any) => {
 
   const handleDeleteAccount = async (email: string) => {
     try {
-      const response = await fetch(`/api/database/user?email=${email}`, {
-        method: "DELETE",
-      });
+      deleteUserMutation(email);
 
-      const data = await response.json();
-      if (!response.ok) {
+      if (isError) {
         toast({
           title: "Error deleting account!!",
         });
-        throw new Error(data.error);
       } else {
         toast({
-          title: "Password change successful!!",
+          title: "Account deletation successful!!",
         });
+        setShowAccountDeleteModal(false);
         router.push("/signin");
       }
     } catch (error) {

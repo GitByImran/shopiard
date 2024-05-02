@@ -6,30 +6,22 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import LoadingButton from "@/components/loading-button";
+import {
+  useDeleteProduct,
+  useGetProducts,
+} from "../../../../../lib/QueryAndMutation";
 
 const AdminManageProductPage = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  const fetchProducts = async () => {
-    try {
-      const getProducts = await fetch("/api/database/product", {
-        method: "GET",
-      });
-      const response = await getProducts.json();
-      setProducts(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setLoading(false);
-    }
-  };
+  const { data, isLoading, isError, isSuccess } = useGetProducts();
+  const { mutate: deleteProductMutation } = useDeleteProduct();
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    setProducts(data);
+  }, [data, isSuccess]);
 
   const handlePreview = (id: string) => {
     router.push(`/product/${id}`);
@@ -39,36 +31,24 @@ const AdminManageProductPage = () => {
     router.push(`/dashboard/admin-upload-product?id=${id}`);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (productId: string) => {
     try {
-      const deleteProduct = await fetch(`/api/database/product?id=${id}`, {
-        method: "DELETE",
-      });
-      const response = await deleteProduct.json();
-      console.log(response);
-      if (response.success) {
-        fetchProducts();
-      }
+      deleteProductMutation(productId);
+      setShowModal(false);
     } catch (error) {
       console.log(error);
-    } finally {
-      setShowModal(false);
     }
   };
 
-  if (!products) {
-    return;
+  if (isLoading) {
+    return <LoadingButton />;
   }
 
   return (
     <div>
-      {loading ? (
-        <div>
-          <LoadingButton />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
-          {products.map((item: IProduct, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        {products &&
+          products.map((item: IProduct, index) => (
             <div
               key={index}
               className="border rounded-lg overflow-hidden sm:block flex "
@@ -139,8 +119,7 @@ const AdminManageProductPage = () => {
               </div>
             </div>
           ))}
-        </div>
-      )}
+      </div>
     </div>
   );
 };

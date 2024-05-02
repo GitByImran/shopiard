@@ -25,11 +25,11 @@ export const GET = async (request: NextRequest, response: NextResponse) => {
       });
     }
 
-    const userPayments: IUser[] = await UserModel.find({
-      "information.email": email,
+    const userData: IUser[] = await UserModel.find({
+      email: email,
     });
 
-    return NextResponse.json({ success: true, data: userPayments });
+    return NextResponse.json({ success: true, data: userData });
   } catch (error: any) {
     console.error("Error:", error);
     return NextResponse.json({ success: false, error: error.message });
