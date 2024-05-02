@@ -56,7 +56,7 @@ const Bottombar = () => {
             ))}
         <li className="">
           <Link href={"/"}>
-            <Home size={18} />
+            <Home />
           </Link>
         </li>
       </ul>

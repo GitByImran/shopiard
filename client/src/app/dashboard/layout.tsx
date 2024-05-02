@@ -11,7 +11,7 @@ const DashboardLayout = ({ children }: any) => {
         </div>
         <main className="flex-1 select-none overflow-auto">{children}</main>
       </div>
-      <div className="flex flex-col justify-between sm:hidden min-h-[90vh]">
+      <div className="flex flex-col justify-between sm:hidden min-h-screen">
         <main className="mx-5 my-5 flex-1 select-none overflow-auto">
           {children}
         </main>

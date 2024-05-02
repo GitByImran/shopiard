@@ -32,7 +32,7 @@ const Sidebar = () => {
                     isActive(menu.goto) ? "bg-cyan-600 text-white" : ""
                   }`}
                 >
-                  {menu.icon}
+                  {/* {menu.icon} */}
                   {menu.label}
                 </Link>
               </li>
@@ -45,7 +45,7 @@ const Sidebar = () => {
                     isActive(menu.goto) ? "bg-cyan-600 text-white" : ""
                   }`}
                 >
-                  {menu.icon}
+                  {/* {menu.icon} */}
                   {menu.label}
                 </Link>
               </li>

@@ -11,22 +11,22 @@ import {
 export const Admin_Dash_Menus = [
   {
     label: "manage orders",
-    icon: <Box size={20} />,
+    icon: <Box />,
     goto: "/dashboard/admin-order",
   },
   {
     label: "upload products",
-    icon: <Upload size={20} />,
+    icon: <Upload />,
     goto: "/dashboard/admin-upload-product",
   },
   {
     label: "manage products",
-    icon: <GanttChart size={20} />,
+    icon: <GanttChart />,
     goto: "/dashboard/admin-manage-product",
   },
   {
     label: "settings",
-    icon: <Settings size={20} />,
+    icon: <Settings />,
     goto: "/dashboard/admin-setting",
   },
 ];
@@ -34,22 +34,22 @@ export const Admin_Dash_Menus = [
 export const User_Dash_Menus = [
   {
     label: "carts",
-    icon: <ShoppingCart size={20} />,
+    icon: <ShoppingCart />,
     goto: "/dashboard/user-cart",
   },
   {
     label: "all orders",
-    icon: <Box size={20} />,
+    icon: <Box />,
     goto: "/dashboard/user-order",
   },
   {
     label: "payment histories",
-    icon: <CreditCard size={20} />,
+    icon: <CreditCard />,
     goto: "/dashboard/user-payment",
   },
   {
     label: "settings",
-    icon: <Settings size={20} />,
+    icon: <Settings />,
     goto: "/dashboard/user-setting",
   },
 ];
